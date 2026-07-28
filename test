@@ -8,3 +8,20 @@ bravo = 50
 charlie = round(bravo/alpha, 2)
 print(charlie)
 # Now Chris is done playing, thanks for your time
+kkkk
+
+hey guys
+
+another test from hana's laptop :D
+
+changing the test file & creating a new branch with it - hana
+
+****
+Steps to get changes made in file in own branch to main branch using VS Code Terminal:
+1) Save own work on own branch: git add 
+    then: git commit -m "your message"
+2) Switch to main branch: git checkout main
+3) get latest changes to main branch: git pull origin main
+4) merge branch with main on own laptop: git merge <your-branch-name>
+5) update main to github: git push origin main
+****
