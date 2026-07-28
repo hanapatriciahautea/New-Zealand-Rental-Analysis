@@ -2,6 +2,12 @@
 pip install pandas
 pip install numpy
 
+# Here is Chris adding stuff in his own branch
+alpha = 13
+bravo = 50
+charlie = round(bravo/alpha, 2)
+print(charlie)
+# Now Chris is done playing, thanks for your time
 kkkk
 
 hey guys
