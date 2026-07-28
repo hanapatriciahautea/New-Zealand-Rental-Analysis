@@ -10,9 +10,6 @@ another test from hana's laptop :D
 
 changing the test file & creating a new branch with it - hana
 
-<<<<<<< HEAD
-Juliane's test in own branch.
-
 ****
 Steps to get changes made in file in own branch to main branch using VS Code Terminal:
 1) Save own work on own branch: git add 
@@ -22,5 +19,3 @@ Steps to get changes made in file in own branch to main branch using VS Code Ter
 4) merge branch with main on own laptop: git merge <your-branch-name>
 5) update main to github: git push origin main
 ****
-=======
->>>>>>> a8f9232712e652bf12fc0b0780e6d075137a2c85
