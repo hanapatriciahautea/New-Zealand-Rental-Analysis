@@ -2,11 +2,13 @@
 This group project is a part of the *Data Wrangling* `DATA422` course at the University of Canterbury. This course provides an introduction to Data Wrangling, also called Data Engineering, a critical
 component of any Data Science project. [See Course Information](https://courseinfo.canterbury.ac.nz/GetCourseDetails.aspx?course=DATA422)
 
+The data comes from  *insideairbnb.com* - a mission driven project that provides data and advocacy about Airbnb's impact on residential communities ([Cox, n.d.](#cox-nd)).
+
 ## The Datasets
 ### 1. AirBnB
-This is the 19 June, 2026 New Zealand dataset from https://insideairbnb.com/get-the-data/
+The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026](#cox-2026)).
 
-**Data Dictionary**
+**Data Dictionary** [Cox (2022)](#cox-2022)  
 | Field Name | Data Type | Description |
 |---|---|---|
 | `availability_365` | integer<sup>1</sup> |The availability of the listing x days in the future as determined by the calendar. <br> Note a listing may not be available because it has been booked by a guest or blocked by the host. |
@@ -31,8 +33,8 @@ This is the 19 June, 2026 New Zealand dataset from https://insideairbnb.com/get-
 
 
 # References & Sources  
-Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026,  [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
+<a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026,  [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
 
-Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
+<a id="cox-2026"></a>Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
 
-Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
+<a id="cox-2022"></a>Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
