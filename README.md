@@ -30,6 +30,9 @@ This is the 19 June, 2026 New Zealand dataset from https://insideairbnb.com/get-
 *Notes:* <sup>1</sup>Calculated from other fields. <sup>2</sup>Looking 365 nights in the future.
 
 
-# References & Sources
-1. [Airbnb NZ Dataset of 19-June-2026](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)
-2. [Data dictionary for Airbnb Dataset](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?usp=sharing)
+# References & Sources  
+Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026,  [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
+
+Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
+
+Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
