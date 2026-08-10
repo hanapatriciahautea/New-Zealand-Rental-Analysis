@@ -58,8 +58,17 @@ def hist_dates(listings):
     Visualising the distribution of the number of days since the last review.
     '''
     listings['last_review'] = pd.to_datetime(listings['last_review'])
-    listings['last_review'] = listings['last_review'].dt.date
-    listings['Publish Date']
+    listings['latest_publish_date'] = "2026-06-19"
+    listings['latest_publish_date'] = pd.to_datetime(listings['latest_publish_date'])
+    listings['days_since_last_review'] = listings['latest_publish_date'] - listings['last_review']
+
+    listings['days_since_last_review'] = (listings['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
+
+    sns.histplot(listings['days_since_last_review'], bins = 30, kde = True)
+    plt.title('Days since last review')
+    plt.xlabel('Days')
+    plt.ylabel('Count')
+    plt.show()
 
 # Plot 3: Top 10% of properties in Christchurch with highest numbers of reviews
 def top_10_reviews(df):
@@ -76,13 +85,40 @@ def top_10_reviews(df):
     # To view the full table, you can uncomment the following lines to export to CSV
     # display_df.to_csv('top_10_percent_listings.csv', index=False)
 
+def option_selection(options):
+    '''
+    Ask the user to select an option from a list of options.
+    '''
+    prompt = 'Please select an option: '
+    i = 0
+    while i < len(options):
+        print(f'{i} {options[i]}')
+        i += 1
+
+    selection = int(input(prompt))
+    while selection < 0 or selection >= len(options):
+        print(f'{selection} is not a valid input. Try again.')
+        selection = int(input(prompt))
+    return selection
+
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 def main():
+    '''
+    Asks user for input and returns requested graphs, statistics, tables or ends the program. 
+    '''
     df, listings = read_csv_data()
-    summary_stats(df, listings)
-    hist_prices(df)
-    hist_dates(listings)
-    top_10_reviews(df)
+    options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Quit']
+    user_input = option_selection(options)
+    if user_input == 0:
+        summary_stats(df, listings)
+    elif user_input == 1:
+        hist_prices(df)
+    elif user_input == 2:
+        hist_dates(listings)
+    elif user_input == 3:
+        top_10_reviews(df)
+    elif user_input == 4:
+        print('Program closed.')
 
 if __name__ == "__main__":
     main()
