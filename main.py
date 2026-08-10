@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# LOAD FILES  ---------------------------------------------------------------------------------------------------------------------
+
 def read_csv_data():
     '''
     Reads the masterfile & converts necessary column data from strings to integers/floats.
@@ -10,46 +12,45 @@ def read_csv_data():
     df = pd.DataFrame(listings)
     return df, listings
 
+# SUMMARY STATS  -----------------------------------------------------------------------------------------------------------------
+
 def summary_stats(df, listings):
     '''
     Prints summary statistics of the compiled masterfile.
     '''
-    # Describe the df - IMPROVE THIS
+    # Describe the df
     print(df.describe())
+    print(listings.shape) # print the number of rows and columns in the dataframe
+    print(listings.columns) # print the column names in the dataframe
 
     # Count missing values per column
     print(df.isnull().sum())
-    print(listings.shape) ##print the number of rows and columns in the dataframe
-    print(listings.columns) ##print the column names in the dataframe
-    print(listings.info()) ##print information about the dataframe
 
 # VISUALISATIONS  ----------------------------------------------------------------------------------------------------------------
 
-# Plot 1: Histogram of distribution of prices (New Zealand & Christchurch City)
+# Plot 1: Histogram of distribution of prices
 def hist_prices(df):
     '''
     Prints a histogram of the distribution of Airbnb listing prices in Christchurch city.
     '''
-    ## Filtering outliers (99th percentile) to get a better view of the distribution
-    ## Note: the dataset is already filtered to christchurch only
+    # First subplot - excluding outliers (99th percentile)
     threshold = df['price'].quantile(0.99)
     df_filtered = df[df['price'] < threshold]
 
     fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+    
+    sns.histplot(df_filtered['price'], bins = 30, kde = True, ax = axs[0])
+    axs[0].set_title('Distribution of Price (excluding outliers - 99th percentile cutoff)')
+    axs[0].set_xlabel('Price')
+    axs[0].set_ylabel('Count (# of listings)')
 
-    # First subplot
-    sns.histplot(df_filtered['price'], bins = 30, kde = True)
-    plt.title('Distribution of Price (99th percentile cutoff)')
-    plt.xlabel('Price')
-    plt.ylabel('Count (# of listings)')
-    # include both with and without outliers 
+    # Second subplot - including outliers
+    sns.histplot(df['price'], bins = 30, kde = True, ax = axs[1])
+    axs[1].set_title('Distribution of Price (including outliers)')
+    axs[1].set_xlabel('Price')
+    axs[1].set_ylabel('Count (# of listings)')
 
-    # Second subplot
-    sns.histplot(df['price'], bins = 30, kde = True)
-    plt.title('Distribution of Price (99th percentile cutoff)')
-    plt.xlabel('Price')
-    plt.ylabel('Count (# of listings)')
-
+    plt.tight_layout()  # prevents titles/labels from overlapping between subplots
     plt.show()
 
 # Plot 2: Days since last review (scrape/publish date vs last review date)
@@ -102,6 +103,7 @@ def option_selection(options):
     return selection
 
 # MAIN  ----------------------------------------------------------------------------------------------------------------
+
 def main():
     '''
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
