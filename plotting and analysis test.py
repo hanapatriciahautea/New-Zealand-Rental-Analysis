@@ -8,9 +8,9 @@ def read_csv_data():
     '''
     listings = pd.read_csv("listings.csv")
     df = pd.DataFrame(listings)
-    return df, listings
+    return df
 
-def summary_stats(df, listings):
+def summary_stats():
     '''
     Prints summary statistics of the compiled masterfile.
     '''
@@ -26,7 +26,7 @@ def summary_stats(df, listings):
 # VISUALISATIONS  ----------------------------------------------------------------------------------------------------------------
 
 # Plot 1: Histogram of distribution of prices (New Zealand & Christchurch City)
-def hist_prices(df):
+def hist_prices():
     '''
     Prints a histogram of the distribution of Airbnb listing prices in Christchurch city.
     '''
@@ -53,7 +53,7 @@ def hist_prices(df):
     plt.show()
 
 # Plot 2: Days since last review (scrape/publish date vs last review date)
-def hist_dates(listings):
+def hist_dates():
     '''
     Visualising the distribution of the number of days since the last review.
     '''
@@ -62,7 +62,7 @@ def hist_dates(listings):
     listings['Publish Date']
 
 # Plot 3: Top 10% of properties in Christchurch with highest numbers of reviews
-def top_10_reviews(df):
+def top_10_reviews():
     '''
     Print the top 10% of properties in Christchurch with highest number of reviews.
     '''
@@ -78,11 +78,10 @@ def top_10_reviews(df):
 
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 def main():
-    df, listings = read_csv_data()
-    summary_stats(df, listings)
-    hist_prices(df)
-    hist_dates(listings)
-    top_10_reviews(df)
+    read_csv_data()
+    hist_prices()
+    hist_dates()
+    top_10_reviews()
 
 if __name__ == "__main__":
     main()
