@@ -40,7 +40,7 @@ def hist_prices(df):
     fig, axs = plt.subplots(2, 1, figsize=(10, 10))
     
     sns.histplot(df_filtered['price'], bins = 30, kde = True, ax = axs[0])
-    axs[0].set_title('Distribution of Price (99th percentile cutoff)')
+    axs[0].set_title('Distribution of Price (excluding outliers - 99th percentile cutoff)')
     axs[0].set_xlabel('Price')
     axs[0].set_ylabel('Count (# of listings)')
 
