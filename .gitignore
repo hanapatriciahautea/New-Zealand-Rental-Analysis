@@ -1,6 +1,9 @@
 # Data Files
 *.csv
 
+# Personal testing files
+plotting and analysis test.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
