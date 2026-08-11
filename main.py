@@ -101,6 +101,20 @@ def cleaning_task(df, cleaning_mode = None, target_columns = []):
     return df, change_log
 
 
+def filter_rows(df):
+    '''Drops all the rows which don't refer to Christchurch'''
+    start_length = df.shape[0]
+    
+    neighbourhood_group_options = ["Christchurch City"]    #The locations to keep
+    
+    # Keep only the rows which mention the above
+    df = df[df['neighbourhood_group'].isin(neighbourhood_group_options)]
+    end_length = df.shape[0]
+
+    print(f"Dropped {start_length - end_length} rows (down from {start_length} to {end_length} rows).")
+    return df
+
+
 def convert_categoricals(df):
     '''Convert string and integer variables into categorical variables; function provides all specifications so will need amending to alter expected behaviours.'''
     columns_affected = {'ordinal':[], 'nominal':[]}
@@ -242,6 +256,7 @@ def main():
     # Load and pre-process the file(s)
     df = read_csv_files(filenames=["listings_2026_06.csv"])    # Import & merge multiple files; filenames should be "listings_YYYY_MM.csv"
     df = do_basic_cleaning(df)
+    df = filter_rows(df)
     df = convert_categoricals(df)
 
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
