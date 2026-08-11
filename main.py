@@ -67,16 +67,24 @@ def hist_dates(df):
 
     fig, axs = plt.subplots(2, 1, figsize=(10, 10))
 
+    # Filtering out negative date differences that occur after the publish date
+    df_no_negatives = df[df['days_since_last_review'] >= 0]
+
+    # Confirmation that the graph filters out negative date differences
+    print(f"Total rows: {len(df)}")
+    print(f"Rows with negative days_since_last_review: {(df['days_since_last_review'] < 0).sum()}")
+    print(f"Rows after filtering: {len(df_no_negatives)}")
+
     # First subplot - excluding outliers (99th percentile)
-    threshold = df['days_since_last_review'].quantile(0.99)
-    df_filtered = df[df['days_since_last_review'] < threshold]
+    threshold = df_no_negatives['days_since_last_review'].quantile(0.99)
+    df_filtered = df_no_negatives[df_no_negatives['days_since_last_review'] < threshold]
     sns.histplot(df_filtered['days_since_last_review'], bins = 30, kde = True, ax = axs[0])
     axs[0].set_title('Days since last review (excluding outliers - 99th percentile cutoff)')
     axs[0].set_xlabel('Days')
     axs[0].set_ylabel('Count (# of listings)')
 
     # Second subplot - including outliers
-    sns.histplot(df['days_since_last_review'], bins = 30, kde = True, ax = axs[1])
+    sns.histplot(df_no_negatives['days_since_last_review'], bins = 30, kde = True, ax = axs[1])
     axs[1].set_title('Days since last review (including outliers)')
     axs[1].set_xlabel('Days')
     axs[1].set_ylabel('Count (# of listings)')
