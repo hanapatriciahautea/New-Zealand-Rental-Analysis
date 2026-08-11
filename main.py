@@ -7,51 +7,46 @@ err_wrap = "!!!!"
 
 
 
+
 # LOAD FILES  ---------------------------------------------------------------------------------------------------------------------
 
 def read_csv_file(filename: str):
     '''
     Reads the masterfile & converts necessary column data from strings to integers/floats.
     '''
-    df, listings = None 
+    df = pd.DataFrame(), pd.DataFrame()    #Return statement is simpler if there's always *something* to return
     #Attempt to load; return failed filename for debugging when bulk/batch loading files
-    try (
+    try:
         listings = pd.read_csv(filename)
         df = pd.DataFrame(listings)
-        )
-    except (
+    except:
         print(f"\n{err_wrap} Error loading file {filename} {err_wrap}\n")
-    )
-    return df, listings     #TODO: Confirm if we actually use the 'listings' return
+
+    return df 
 
 
 def read_csv_files(filenames: [str], filepath: str = None):
     ''''
-    Wrapper function for read_csv_file() which takes in a list of filenames and 
-        (optionally) path details, returning a single merged dataset.
+    Wrapper function for read_csv_file() which takes in a list of filenames and (optionally) path details, returning a single merged dataset.
     '''
     # Prefix filenames with path, if supplied
     if filepath != None:
-        # Add filepath, removing trailing whitespace and the slash from the end to avoid double-ups
-        filepath = filepath.strip()
         if filepath[-1] == "\\":
-            filepath == filepath[:-1]
-        # Combine the file path & name
-        filenames = [filepath + "\\" + filename for filename in filenames]
+            filepath == filepath[:-1]  #Remove slash from the end to avoid double-ups
+        filepath = filepath.strip()    #Remove trailing whitespace
+        filenames = [filepath + "\\" + filename for filename in filenames] # Combine the file path & name
     
-    # Generate a list of dataframes based on the files
-    df_set = [read_csv_file(filename) for filename in filenames]
+    df_set = [read_csv_file(filename) for filename in filenames]    #Generate a list of dataframes based on the files
+    merged_df = pd.concat(df_set, ignore_index=True)    #Merge the files and recompute indices; should handle mild column differences automatically
+    
+    return merged_df
 
-    # Merge the files and recompute indices; should handle mild column 
-    df = pd.concat(df_set, ignore_index=True)
-
-    return df
 
 def do_custom_cleaning(dataset, drop_cols: str = None):
     ''''
-    Return a cleaned dataset
+    Return a cleaned dataset after dropping manually specified columns, performing type conversion
+    and adding Month and Year columns
     '''
-    #TODO: Add more detail to this docstring
     # Drop targeted columns
     # Convert str to datetime
     # Convert ints to floats
@@ -59,24 +54,26 @@ def do_custom_cleaning(dataset, drop_cols: str = None):
         # Ordinal - levels have an 'order' or sequence
         # Nominal
     # Add column for month and year
-    
+
     return dataset
+
 
 
 
 # SUMMARY STATS  -----------------------------------------------------------------------------------------------------------------
 
-def summary_stats(df, listings):
+def summary_stats(df):
     '''
     Prints summary statistics of the compiled masterfile.
     '''
     # Describe the df
+    print(df.shape) # print the number of rows and columns in the dataframe
+    print(df.columns) # print the column names in the dataframe
+    print(df.isnull().sum()) # Count missing values per column
     print(df.describe())
-    print(listings.shape) # print the number of rows and columns in the dataframe
-    print(listings.columns) # print the column names in the dataframe
+    
 
-    # Count missing values per column
-    print(df.isnull().sum())
+
 
 # VISUALISATIONS  ----------------------------------------------------------------------------------------------------------------
 
@@ -105,23 +102,25 @@ def hist_prices(df):
     plt.tight_layout()  # prevents titles/labels from overlapping between subplots
     plt.show()
 
+
 # Plot 2: Days since last review (scrape/publish date vs last review date)
-def hist_dates(listings):
+def hist_dates(df):
     '''
     Visualising the distribution of the number of days since the last review.
     '''
-    listings['last_review'] = pd.to_datetime(listings['last_review'])
-    listings['latest_publish_date'] = "2026-06-19"
-    listings['latest_publish_date'] = pd.to_datetime(listings['latest_publish_date'])
-    listings['days_since_last_review'] = listings['latest_publish_date'] - listings['last_review']
+    df['last_review'] = pd.to_datetime(df['last_review'])
+    df['latest_publish_date'] = "2026-06-19"
+    df['latest_publish_date'] = pd.to_datetime(df['latest_publish_date'])
+    df['days_since_last_review'] = df['latest_publish_date'] - df['last_review']
 
-    listings['days_since_last_review'] = (listings['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
+    df['days_since_last_review'] = (df['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
 
-    sns.histplot(listings['days_since_last_review'], bins = 30, kde = True)
+    sns.histplot(df['days_since_last_review'], bins = 30, kde = True)
     plt.title('Days since last review')
     plt.xlabel('Days')
     plt.ylabel('Count')
     plt.show()
+
 
 # Plot 3: Top 10% of properties in Christchurch with highest numbers of reviews
 def top_10_reviews(df):
@@ -138,21 +137,27 @@ def top_10_reviews(df):
     # To view the full table, you can uncomment the following lines to export to CSV
     # display_df.to_csv('top_10_percent_listings.csv', index=False)
 
+
 def option_selection(options):
     '''
     Ask the user to select an option from a list of options.
     '''
     prompt = 'Please select an option: '
     i = 0
+    print()    #Insert a blank line above the options, for readability
     while i < len(options):
         print(f'{i} {options[i]}')
         i += 1
-
+    
+    print('-' * (len(prompt)-1))    #Print a line above where the prompt will appear
     selection = int(input(prompt))
     while selection < 0 or selection >= len(options):
-        print(f'{selection} is not a valid input. Try again.')
+        print(f'\n{err_wrap} {selection} is not a valid input. Try again. {err_wrap}\n')
         selection = int(input(prompt))
     return selection
+
+
+
 
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 
@@ -160,19 +165,31 @@ def main():
     '''
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
     '''
-    df, listings = read_csv_data("listings.csv")
+    # Load and pre-process the file(s)
+    df = read_csv_file("listings.csv")        #Import a single file
+    #df = read_csv_files(filenames=["listings1.csv"])    #Import & merge multiple files
+    #df = do_custom_cleaning(df, drop_cols=["licence"])
+    
+    df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
+    
     options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Quit']
-    user_input = option_selection(options)
-    if user_input == 0:
-        summary_stats(df, listings)
-    elif user_input == 1:
-        hist_prices(df)
-    elif user_input == 2:
-        hist_dates(listings)
-    elif user_input == 3:
-        top_10_reviews(df)
-    elif user_input == 4:
-        print('Program closed.')
+    
+    run_programme = True
+    while run_programme:
+        user_input = option_selection(options)
+        if user_input == 0:
+            summary_stats(df)
+        elif user_input == 1:
+            print("\nGenerating Graph...\n")
+            hist_prices(df)
+        elif user_input == 2:
+            print("\nGenerating Graph...\n")
+            hist_dates(df)
+        elif user_input == 3:
+            top_10_reviews(df)
+        elif user_input == 4:
+            run_programme = False    #Quits the programme gracefully
+            print('\nProgram closed.\n')
 
 if __name__ == "__main__":
     main()
