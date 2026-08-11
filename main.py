@@ -2,15 +2,67 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+#### Parameters and Helper Variables
+err_wrap = "!!!!"
+
+
+
 # LOAD FILES  ---------------------------------------------------------------------------------------------------------------------
 
-def read_csv_data():
+def read_csv_file(filename: str):
     '''
     Reads the masterfile & converts necessary column data from strings to integers/floats.
     '''
-    listings = pd.read_csv("listings.csv")
-    df = pd.DataFrame(listings)
-    return df, listings
+    df, listings = None 
+    #Attempt to load; return failed filename for debugging when bulk/batch loading files
+    try (
+        listings = pd.read_csv(filename)
+        df = pd.DataFrame(listings)
+        )
+    except (
+        print(f"\n{err_wrap} Error loading file {filename} {err_wrap}\n")
+    )
+    return df, listings     #TODO: Confirm if we actually use the 'listings' return
+
+
+def read_csv_files(filenames: [str], filepath: str = None):
+    ''''
+    Wrapper function for read_csv_file() which takes in a list of filenames and 
+        (optionally) path details, returning a single merged dataset.
+    '''
+    # Prefix filenames with path, if supplied
+    if filepath != None:
+        # Add filepath, removing trailing whitespace and the slash from the end to avoid double-ups
+        filepath = filepath.strip()
+        if filepath[-1] == "\\":
+            filepath == filepath[:-1]
+        # Combine the file path & name
+        filenames = [filepath + "\\" + filename for filename in filenames]
+    
+    # Generate a list of dataframes based on the files
+    df_set = [read_csv_file(filename) for filename in filenames]
+
+    # Merge the files and recompute indices; should handle mild column 
+    df = pd.concat(df_set, ignore_index=True)
+
+    return df
+
+def do_custom_cleaning(dataset, drop_cols: str = None):
+    ''''
+    Return a cleaned dataset
+    '''
+    #TODO: Add more detail to this docstring
+    # Drop targeted columns
+    # Convert str to datetime
+    # Convert ints to floats
+    # Convert str and int to factors
+        # Ordinal - levels have an 'order' or sequence
+        # Nominal
+    # Add column for month and year
+    
+    return dataset
+
+
 
 # SUMMARY STATS  -----------------------------------------------------------------------------------------------------------------
 
@@ -108,7 +160,7 @@ def main():
     '''
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
     '''
-    df, listings = read_csv_data()
+    df, listings = read_csv_data("listings.csv")
     options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Quit']
     user_input = option_selection(options)
     if user_input == 0:
