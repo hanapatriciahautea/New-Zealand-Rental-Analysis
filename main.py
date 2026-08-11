@@ -54,22 +54,35 @@ def hist_prices(df):
     plt.show()
 
 # Plot 2: Days since last review (scrape/publish date vs last review date)
-def hist_dates(listings):
+def hist_dates(df):
     '''
     Visualising the distribution of the number of days since the last review.
     '''
-    listings['last_review'] = pd.to_datetime(listings['last_review'])
-    listings['latest_publish_date'] = "2026-06-19"
-    listings['latest_publish_date'] = pd.to_datetime(listings['latest_publish_date'])
-    listings['days_since_last_review'] = listings['latest_publish_date'] - listings['last_review']
+    df['last_review'] = pd.to_datetime(df['last_review'])
+    df['latest_publish_date'] = "2026-06-19"
+    df['latest_publish_date'] = pd.to_datetime(df['latest_publish_date'])
+    df['days_since_last_review'] = df['latest_publish_date'] - df['last_review']
 
-    listings['days_since_last_review'] = (listings['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
+    df['days_since_last_review'] = (df['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
 
-    sns.histplot(listings['days_since_last_review'], bins = 30, kde = True)
-    plt.title('Days since last review')
-    plt.xlabel('Days')
-    plt.ylabel('Count')
-    plt.show()
+    fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+
+    # First subplot - excluding outliers (99th percentile)
+    threshold = df['days_since_last_review'].quantile(0.99)
+    df_filtered = df[df['days_since_last_review'] < threshold]
+    sns.histplot(df_filtered['days_since_last_review'], bins = 30, kde = True, ax = axs[0])
+    axs[0].set_title('Days since last review (excluding outliers - 99th percentile cutoff)')
+    axs[0].set_xlabel('Days')
+    axs[0].set_ylabel('Count (# of listings)')
+
+    # Second subplot - including outliers
+    sns.histplot(df['days_since_last_review'], bins = 30, kde = True, ax = axs[1])
+    axs[1].set_title('Days since last review (including outliers)')
+    axs[1].set_xlabel('Days')
+    axs[1].set_ylabel('Count (# of listings)')
+
+    plt.tight_layout()  # prevents titles/labels from overlapping between subplots
+    plt.show()    
 
 # Plot 3: Top 10% of properties in Christchurch with highest numbers of reviews
 def top_10_reviews(df):
