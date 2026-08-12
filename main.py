@@ -5,8 +5,6 @@ import seaborn as sns
 #### Parameters and Helper Variables
 err_wrap = "!!!!"
 
-
-
 # LOAD FILES  ---------------------------------------------------------------------------------------------------------------------
 
 def read_csv_file(filename: str):
@@ -26,7 +24,7 @@ def read_csv_file(filename: str):
 def read_csv_files(filenames: list[str], filepath: str = None):
     '''Wrapper function for read_csv_file() which takes in a list of filenames and (optionally) path details, returning a single merged dataset.'''
     # Capture publish date (year, month, day) from filename - ditch the non-date parts
-    publish_dates = [filename.split('_')[1:] for filename in filenames]
+    publish_dates = [filename.replace('.csv',"").split('_')[1:] for filename in filenames]
     
     # Prefix filenames with path, if supplied
     if filepath != None:
@@ -41,9 +39,9 @@ def read_csv_files(filenames: list[str], filepath: str = None):
     for i, filename in enumerate(filenames):
         df = read_csv_file(filename)
         df['year'], df['month'], df['day'] = publish_dates[i]    # Add new columns for publishing year and month; type conversion is handled later
-        df['publish_date'] = datetime.strptime('-'.join(publish_dates[i]), "%Y-%m-%d")    # Published date in datetime format
+        df['publish_date'] = pd.to_datetime('-'.join(publish_dates[i]), format = "%Y-%m-%d")    # Published date in datetime format
         df_set.append(df)
-    
+       
     #Merge the dataframes (recomputing row indices) then return results; should handle mild column differences automatically
     merged_df = pd.concat(df_set, ignore_index=True)
     print(" Loading complete.")   
@@ -146,9 +144,6 @@ def convert_categoricals(df):
     return df
 
 
-
-
-
 # SUMMARY STATS  -----------------------------------------------------------------------------------------------------------------
 
 def summary_stats(df):
@@ -162,9 +157,6 @@ def summary_stats(df):
     print(df.describe())
     print(df.dtypes)    #Print the data types for the columns of the dataframe
     
-
-
-
 # VISUALISATIONS  ----------------------------------------------------------------------------------------------------------------
 
 # Plot 1: Histogram of distribution of prices
@@ -198,10 +190,8 @@ def hist_dates(df):
     '''
     Visualising the distribution of the number of days since the last review.
     '''
-    df['last_review'] = pd.to_datetime(df['last_review'])
-    df['latest_publish_date'] = "2026-06-19"
-    df['latest_publish_date'] = pd.to_datetime(df['latest_publish_date'])
-    df['days_since_last_review'] = df['latest_publish_date'] - df['last_review']
+
+    df['days_since_last_review'] = df['publish_date'] - df['last_review']
 
     df['days_since_last_review'] = (df['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
 
@@ -267,9 +257,6 @@ def option_selection(options):
         selection = int(input(prompt))
     return selection
 
-
-
-
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 
 def main():
@@ -277,7 +264,10 @@ def main():
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
     '''
     # Load and pre-process the file(s)
-    df = read_csv_files(filenames=["listings_2026_06_19.csv"])    # Import & merge multiple files; filenames should be "listings_YYYY_MM_DD.csv"
+    df = read_csv_files(filenames=["listings_2026_06_19.csv","listings_2026_05_23.csv","listings_2026_04_16.csv",
+                                   "listings_2026_03_17.csv","listings_2026_02_13.csv","listings_2026_01_16.csv",
+                                   "listings_2025_12_11.csv","listings_2025_11_07.csv","listings_2025_10_05.csv"])    
+                                   # Import & merge multiple files; filenames should be "listings_YYYY_MM_DD.csv"
     df = filter_rows(df)
     df = do_basic_cleaning(df)
     df = convert_categoricals(df)
