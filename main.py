@@ -231,7 +231,7 @@ def top_10_reviews(df):
     df_sorted = df.sort_values(by='number_of_reviews', ascending = False)
     top_10_percent = df_sorted.head(int(len(df_sorted) * 0.1))
 
-    display_df = top_10_percent[['id', 'name', 'number_of_reviews']].rename(columns={'name':'Name of Listing', 'number_of_reviews': 'Number of Reviews'})
+    display_df = top_10_percent[['id', 'name', 'number_of_reviews', 'publish_date']].rename(columns={'id': 'ID', 'name':'Name of Listing', 'number_of_reviews': 'Number of Reviews', 'publish_date':'Publish Date'})
     display_df['Rank'] = top_10_percent['number_of_reviews'].rank(ascending = False, method='min').astype(int) # using min method to tie values at the lowest possible rank, reasonable for ranking reviews
     print(display_df)
 
