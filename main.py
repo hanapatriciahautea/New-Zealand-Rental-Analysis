@@ -41,6 +41,7 @@ def read_csv_files(filenames: list[str], filepath: str = None):
     for i, filename in enumerate(filenames):
         df = read_csv_file(filename)
         df['year'], df['month'], df['day'] = publish_dates[i]    # Add new columns for publishing year and month; type conversion is handled later
+        df['publish_date'] = datetime.strptime('-'.join(publish_dates[i]), "%Y-%m-%d")    # Published date in datetime format
         df_set.append(df)
     
     #Merge the dataframes (recomputing row indices) then return results; should handle mild column differences automatically
