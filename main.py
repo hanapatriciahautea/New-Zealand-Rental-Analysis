@@ -48,6 +48,8 @@ def read_csv_files(filenames: list[str], filepath: str = None):
     return merged_df
 
 
+# CLEAN DATA  ---------------------------------------------------------------------------------------------------------------------
+
 def do_basic_cleaning(df):
     '''Return a cleaned dataset after dropping manually specified columns, performing type conversion and adding Month and Year columns. (Wrapper for 'cleaning task')'''
     actions_taken = []    #Collects details of actions taken, for reporting when complete
@@ -151,11 +153,20 @@ def summary_stats(df):
     Prints summary statistics of the compiled masterfile.
     '''
     # Describe the df
-    print(df.shape) # print the number of rows and columns in the dataframe
-    print(df.columns) # print the column names in the dataframe
-    print(df.isnull().sum()) # Count missing values per column
+    print("\033[1m" + "\n Number of rows and columns in the dataframe " + "\033[0m") #  "\033[1m" and "\033[0m" are to indicate bold formatting
+    print(df.shape) 
+
+    print("\033[1m" + "\n Column names" + "\033[0m")
+    print(df.columns) 
+
+    print("\033[1m" + "\n Number of missing values per column" + "\033[0m")
+    print(df.isnull().sum()) 
+
+    print("\033[1m" + "\n Descriptive statistics of dataset" + "\033[0m")
     print(df.describe())
-    print(df.dtypes)    #Print the data types for the columns of the dataframe
+
+    print("\033[1m" + "\n Data types per column" + "\033[0m")
+    print(df.dtypes)   
     
 # VISUALISATIONS  ----------------------------------------------------------------------------------------------------------------
 
