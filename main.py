@@ -23,7 +23,7 @@ def read_csv_file(filename: str):
     return df 
 
 
-def read_csv_files(filenames: [str], filepath: str = None):
+def read_csv_files(filenames: list[str], filepath: str = None):
     '''Wrapper function for read_csv_file() which takes in a list of filenames and (optionally) path details, returning a single merged dataset.'''
     # Capture publish date (year & month) from filename
     publish_dates = [filename.split('_')[1:4] for filename in filenames]
@@ -123,6 +123,7 @@ def convert_categoricals(df):
     conversion_variables = {
         #variableName:[isOrdinal, [Category labels in ascending order]]
         "room_type":[True, ["Shared room", "Private room", "Entire home/apt", "Hotel room"]],
+        "month":[True, ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]]
         "neighbourhood_group":[False],
         "neighbourhood":[False]
     }
@@ -276,8 +277,8 @@ def main():
     '''
     # Load and pre-process the file(s)
     df = read_csv_files(filenames=["listings_2026_06.csv"])    # Import & merge multiple files; filenames should be "listings_YYYY_MM.csv"
-    df = do_basic_cleaning(df)
     df = filter_rows(df)
+    df = do_basic_cleaning(df)
     df = convert_categoricals(df)
 
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
