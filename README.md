@@ -31,6 +31,8 @@ The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026]
 
 *Notes:* <sup>1</sup>Calculated from other fields. <sup>2</sup>Looking 365 nights in the future.
 
+## Licence
+TBD
 
 # References & Sources  
 <a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026,  [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
