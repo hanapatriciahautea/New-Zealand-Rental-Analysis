@@ -2,7 +2,62 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def prepare_combined_dataset():
+    '''concatenates all Christchurch datasets from October 2025 to 
+    June 2026 into a single dataset and saves it as a CSV file.
+    '''
 
+    files = {
+        "listings_10_2025.csv": "2025-10",
+        "listings_11_2025.csv": "2025-11",
+        "listings_12_2025.csv": "2025-12",
+        "listings_01_2026.csv": "2026-01",
+        "listings_02_2026.csv": "2026-02",
+        "listings_03_2026.csv": "2026-03",
+        "listings_04_2026.csv": "2026-04",
+        "listings_05_2026.csv": "2026-05",
+        "listings_06_2026.csv": "2026-06"
+    }
+
+    christchurch_datasets = []
+
+    for file_name, month_year in files.items():
+
+        listings = pd.read_csv(file_name)
+
+        # Filter to Christchurch only
+        listings = listings[
+            listings["neighbourhood_group"] == "Christchurch City"
+        ].copy()
+
+        # Drop empty licence column
+        if "license" in listings.columns:
+            listings = listings.drop(columns=["license"])
+
+        # Convert last_review to date
+        listings["last_review"] = pd.to_datetime(
+            listings["last_review"],
+            errors="coerce"
+        )
+
+        # Add month and year
+        listings["month_year"] = month_year
+
+        christchurch_datasets.append(listings)
+
+    # Concatenate all datasets
+    combined = pd.concat(
+        christchurch_datasets,
+        ignore_index=True
+    )
+
+    # Save the concatenated dataset
+    combined.to_csv(
+        "christchurch_listings_oct2025_jun2026.csv",
+        index=False
+    )
+
+    return combined
 
 
 # LOAD FILES  ---------------------------------------------------------------------------------------------------------------------
@@ -11,7 +66,7 @@ def read_csv_data():
     '''
     Reads the masterfile & converts necessary column data from strings to integers/floats.
     '''
-    listings = pd.read_csv("listings.csv")
+    listings = prepare_combined_dataset()
     df = pd.DataFrame(listings)
     return df, listings
 
