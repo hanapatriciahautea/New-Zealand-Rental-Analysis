@@ -10,7 +10,7 @@ err_wrap = "!!!!"
 def read_csv_file(filename: str):
     '''Reads the masterfile & converts necessary column data from strings to integers/floats.'''
     print(".", end="")
-    df = pd.DataFrame(), pd.DataFrame()    #Return statement is simpler if there's always *something* to return
+    df = pd.DataFrame()    #Return statement is simpler if there's always *something* to return
     #Attempt to load; return failed filename for debugging when bulk/batch loading files
     try:
         listings = pd.read_csv(filename)
