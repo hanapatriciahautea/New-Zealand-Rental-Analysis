@@ -25,8 +25,8 @@ def read_csv_file(filename: str):
 
 def read_csv_files(filenames: list[str], filepath: str = None):
     '''Wrapper function for read_csv_file() which takes in a list of filenames and (optionally) path details, returning a single merged dataset.'''
-    # Capture publish date (year & month) from filename
-    publish_dates = [filename.split('_')[1:4] for filename in filenames]
+    # Capture publish date (year, month, day) from filename - ditch the non-date parts
+    publish_dates = [filename.split('_')[1:] for filename in filenames]
     
     # Prefix filenames with path, if supplied
     if filepath != None:
@@ -40,7 +40,7 @@ def read_csv_files(filenames: list[str], filepath: str = None):
     df_set = []
     for i, filename in enumerate(filenames):
         df = read_csv_file(filename)
-        df['year'], df['month'] = publish_dates[i]    # Add new columns for publishing year and month; type conversion is handled later
+        df['year'], df['month'], df['day'] = publish_dates[i]    # Add new columns for publishing year and month; type conversion is handled later
         df_set.append(df)
     
     #Merge the dataframes (recomputing row indices) then return results; should handle mild column differences automatically
@@ -123,7 +123,7 @@ def convert_categoricals(df):
     conversion_variables = {
         #variableName:[isOrdinal, [Category labels in ascending order]]
         "room_type":[True, ["Shared room", "Private room", "Entire home/apt", "Hotel room"]],
-        "month":[True, ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]]
+        "month":[True, ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]],
         "neighbourhood_group":[False],
         "neighbourhood":[False]
     }
@@ -276,7 +276,7 @@ def main():
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
     '''
     # Load and pre-process the file(s)
-    df = read_csv_files(filenames=["listings_2026_06.csv"])    # Import & merge multiple files; filenames should be "listings_YYYY_MM.csv"
+    df = read_csv_files(filenames=["listings_2026_06_19.csv"])    # Import & merge multiple files; filenames should be "listings_YYYY_MM_DD.csv"
     df = filter_rows(df)
     df = do_basic_cleaning(df)
     df = convert_categoricals(df)
