@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+#listings files ignored
+listings*.csv
+christchurch_listings_oct2025_jun2026.csv
