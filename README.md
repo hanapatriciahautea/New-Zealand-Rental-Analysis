@@ -56,7 +56,9 @@ Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geo
 
 
 ## Licence
-TBD
+The Airbnb raw data is made available under a Creative Commons licence by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
+
+The rental bond raw data is made available under a Creative Commons licence by The Ministry of Business, Innovation and Employment: [https://creativecommons.org/licenses/by/3.0/nz/](https://creativecommons.org/licenses/by/3.0/nz/).
 
 # References & Sources  
 <a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026, from [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
