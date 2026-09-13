@@ -41,19 +41,20 @@ Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geo
 **Data Dictionary** 
 | Field Name | Data Type | Description |
 |---|---|---|
-|`TimeFrame`| text -> should be date | Reporting month represented by the 1st of each month, e.g. April 2026 = 2026-04-01. Format: YYYY-MM-DD |
-|`Location Id`| text -> should be numeric | Six digit code. First number refers to island (North Island = 1,2 / South Island = 3). |
-|`Dwelling Type`| text | Classification of the properties. Available types: ALL, Apartment, Boarding House, Flat, House, Room. |
-|`Number Of Beds`| text -> should be numeric | Number of beds in the rental.|
-|`Total Bonds`| numeric |  |
-|`Active Bonds`| numeric |  |
-|`Closed Bonds`| numeric |---|
-|`Median Rent`| text -> should be numeric |---|
-|`Geometric Mean Rent`| text -> should be numeric |---|
-|`Upper Quartile Rent`| text -> should be numeric |---|
-|`Lower Quartile Rent`| text -> should be numeric |---|
-|`Log Std Dev Weekly Rent`| text -> should be numeric |---|
+|`TimeFrame`| text -> should be date | Reporting quarter, e.g. April 2026 = represents January, February, and March 2026. Data format: 01.04.2026 = DD.MM.YYYY |
+|`Location Id`| text -> should be numeric | Geographic identifier. Six digit code. First number refers to island (North Island = 1,2 / South Island = 3). |
+|`Dwelling Type`| text | Classification of the property. Available types: ALL, Apartment, Boarding House, Flat, House, Room. |
+|`Number Of Beds`| text -> should be numeric | Number of bedrooms in the rental.|
+|`Total Bonds`| numeric | The aggregate number of bonds processed, lodged, or accounted for during the defined time frame for that location and dwelling category.sup>3</sup> |
+|`Active Bonds`| numeric | The count of rental bonds currently held by Tenancy Services that remain live and operational at the time the data snapshot was generated.<sup>3</sup> |
+|`Closed Bonds`| numeric | The total count of rental bonds that were refunded, released, or officially closed out during the specified reporting timeframe.<sup>3</sup> |
+|`Median Rent`| text -> should be numeric | Midpoint price of weekly rent entries. Exactly half of the properties are rented for more than this amount, and half for less. |
+|`Geometric Mean Rent`| text -> should be numeric | Average of rental bond in NZD calculated by taking the nth root of the product of rental bonds. |
+|`Upper Quartile Rent`| text -> should be numeric | 25th percentile meaning 25% of the rental bonds in NZD fall below this number and 75% fall above this number |
+|`Lower Quartile Rent`| text -> should be numeric | 75th percentile meaning 75% of the rental bonds in NZD fall below this number and 25% fall above this number |
+|`Log Std Dev Weekly Rent`| text -> should be numeric | The standard deviation of the natural logarithm of weekly rents. This is a statistical metric used to evaluate the relative dispersion or variance of rental costs within the sample, normalizing for scale across different price levels.<sup>3</sup> |
 
+*Notes:* <sup>3</sup>Definition of marked items created with supportof Google Gemini due to lack of information or clarity on website.
 
 ## Licence
 The Airbnb raw data is made available under a Creative Commons licence by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
