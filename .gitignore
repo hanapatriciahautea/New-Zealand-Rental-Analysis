@@ -1,9 +1,13 @@
+# Data Files
+*.csv
+
+# Personal testing files
+plotting and analysis test.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
 *$py.class
-
-.Rproj.user/
 
 # C extensions
 *.so
@@ -218,7 +222,4 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-#listings files ignored
-listings*.csv
-christchurch_listings_oct2025_jun2026.csv
+.Rproj.user
