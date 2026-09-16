@@ -40,6 +40,17 @@ Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geo
 
 For the translation of SA2-Code into city name, the "Dwellings dataset" from Christchurch City Council has been used. ([Christchurch City Council, n.d.](#CCC-nd))
 
+#### Approach to cleaning
+The Rental Bond dataset has been cleaned to match the Airbnb dataset.
+1. Location Id NULL and -99 have been removed from the dataset
+2. TimeFrame has been split into Year and Month.
+3. Converted the Month into month range representing a quarter.
+4. Removed any TimeFrame for which there is no complete set of data matching with Airbnb.
+5. Used Dwellings_SA2 dataset to translate Location Id into City names.
+6. Removed any non-Christchurch data
+7. Renamed columns to match Airbnb data
+8. Matched and renamed dwelling types to Airbnb room types
+
 **Data Dictionary** 
 | Field Name | Data Type | Description |
 |---|---|---|
