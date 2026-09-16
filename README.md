@@ -31,13 +31,72 @@ The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026]
 
 *Notes:* <sup>1</sup>Calculated from other fields. <sup>2</sup>Looking 365 nights in the future.
 
+### Approach to cleaning
+1. Read in multiple CSV files to a pandas dataframe.
+2. Filter the rows by dropping all those which don't have the value of "*Christchurch*" in the `neighbourhood_group` column.
+3. Manually drop the `licence` column, because it is empty.
+4. Convert the `last_review` column from strings (e.g., "2020-01-22") to valid datetime format, using `pd.to_datetime()`.
+
+Each function in the pipeline is configured to print (to the console) a summary of what it did and how many columns or rows were affected, or to clarify that no change was made. The row filtering step reports the number of rows 'dropped', alongside the initial and final row counts.
+
+
+### 2. Rental bond data
+The rental bond dataset was published by the The Ministry of Business, Innovation and Employment and made available on their Tenancy Services website. The data has been last updated on 10th September 2026 and it has been retrieve for this project on 10th September 2026. Specifically, the "Detailed quarterly report, January 2020 to April 2026" is used here ([The Ministry of Business, Innovation and Employment, 2026](#MBIE-2026)).
+
+Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geographic boundaries as defined by Stats NZ and used for reporting population and demographic data ([Stats NZ, 2026](#StatsNZ-2026)).
+'The SA2 geography aims to reflect communities that interact together socially and economically. In populated areas, SA2s generally contain similar-sized populations. SA2s in city council areas generally have a population of 2,000–4,000 residents while SA2s in district council areas generally have a population of 1,000–3,000 residents.' ([Stats NZ, 2019](#StatsNZ-2019))
+
+For the translation of SA2-Code into city name, the "Dwellings dataset" from Christchurch City Council has been used. ([Christchurch City Council, n.d.](#CCC-nd))
+
+**Data Dictionary** 
+| Field Name | Data Type | Description |
+|---|---|---|
+|`TimeFrame`| text -> should be date | Reporting quarter, e.g. April 2026 = represents January, February, and March 2026. Data format: 01.04.2026 = DD.MM.YYYY |
+|`Location Id`| text -> should be numeric | Geographic identifier. Six digit code. First number refers to island (North Island = 1,2 / South Island = 3). |
+|`Dwelling Type`| text | Classification of the property. Available types: ALL, Apartment, Boarding House, Flat, House, Room. |
+|`Number Of Beds`| text -> should be numeric | Number of bedrooms in the rental.|
+|`Total Bonds`| numeric | The aggregate number of bonds processed, lodged, or accounted for during the defined time frame for that location and dwelling category.sup>3</sup> |
+|`Active Bonds`| numeric | The count of rental bonds currently held by Tenancy Services that remain live and operational at the time the data snapshot was generated.<sup>3</sup> |
+|`Closed Bonds`| numeric | The total count of rental bonds that were refunded, released, or officially closed out during the specified reporting timeframe.<sup>3</sup> |
+|`Median Rent`| text -> should be numeric | Midpoint price of weekly rent entries. Exactly half of the properties are rented for more than this amount, and half for less. |
+|`Geometric Mean Rent`| text -> should be numeric | Average of rental bond in NZD calculated by taking the nth root of the product of rental bonds. |
+|`Upper Quartile Rent`| text -> should be numeric | 25th percentile meaning 25% of the rental bonds in NZD fall below this number and 75% fall above this number |
+|`Lower Quartile Rent`| text -> should be numeric | 75th percentile meaning 75% of the rental bonds in NZD fall below this number and 25% fall above this number |
+|`Log Std Dev Weekly Rent`| text -> should be numeric | The standard deviation of the natural logarithm of weekly rents. This is a statistical metric used to evaluate the relative dispersion or variance of rental costs within the sample, normalizing for scale across different price levels.<sup>3</sup> |
+
+*Notes:* <sup>3</sup>Definition of marked items created with supportof Google Gemini due to lack of information or clarity on website.
+
+### Approach to cleaning
+The Rental Bond dataset has been cleaned to match the Airbnb dataset.
+1. Location Id NULL and -99 have been removed from the dataset
+2. TimeFrame has been split into Year and Month.
+3. Converted the Month into month range representing a quarter.
+4. Removed any TimeFrame for which there is no complete set of data matching with Airbnb.
+5. Used Dwellings_SA2 dataset to translate Location Id into City names.
+6. Removed any non-Christchurch data
+7. Renamed columns to match Airbnb data
+8. Matched and renamed dwelling types to Airbnb room types
+
+
+## License
+The Airbnb raw data is made available under a Creative Commons license by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
+
+The rental bond raw data is made available under a Creative Commons license by The Ministry of Business, Innovation and Employment: [https://creativecommons.org/licenses/by/3.0/nz/](https://creativecommons.org/licenses/by/3.0/nz/).
 
 # References & Sources  
-<a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026,  [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
+<a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026, from [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
 
-<a id="cox-2026"></a>Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
+<a id="cox-2026"></a>Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, from [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
 
-<a id="cox-2022"></a>Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
+<a id="cox-2022"></a>Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, from [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
+
+<a id="MBIE-2026"></a>The Ministry of Business, Innovation and Employment. (2026, September 10). *Rental bond data*. Retrieved September 10, 2026, from [https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/](https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/)
+
+<a id="StatsNZ-2026"></a>Stats NZ. (2026, September 3). *Statistical Area 2 2019 (generalised)*. Retrieved September 10, 2026, from [https://datafinder.stats.govt.nz/layer/98970-statistical-area-2-2019-generalised/](https://datafinder.stats.govt.nz/layer/98970-statistical-area-2-2019-generalised/)
+
+<a id="StatsNZ-2019"></a>Stats NZ. (2019, July 25). *Statistical Area 2 2029 V1.0.0*. Retrieved September 10, 2026, from [https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo](https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo)
+
+<a id="CCC-nd"></a>Christchurch City Council. (n.d.). *Christchurch and Canterbury census data*. Retrieved September 14, 2026, from: [https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data](https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data)
 
 OpenAI. (2026). *ChatGPT*. Retrieved September 16, 2026, [https://chatgpt.com/](https://chatgpt.com/)
 
