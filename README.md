@@ -97,3 +97,18 @@ The rental bond raw data is made available under a Creative Commons license by T
 <a id="StatsNZ-2019"></a>Stats NZ. (2019, July 25). *Statistical Area 2 2029 V1.0.0*. Retrieved September 10, 2026, from [https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo](https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo)
 
 <a id="CCC-nd"></a>Christchurch City Council. (n.d.). *Christchurch and Canterbury census data*. Retrieved September 14, 2026, from: [https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data](https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data)
+
+OpenAI. (2026). *ChatGPT*. Retrieved September 16, 2026, [https://chatgpt.com/](https://chatgpt.com/)
+
+
+# Generative AI Use
+
+Generative AI tools, including ChatGPT (OpenAI, 2026), were used as supplementary learning and troubleshooting resources during this project. Specifically, AI was used to help explain Python functions and package documentation, interpret error messages, assist with debugging, and provide guidance with the implementation of code where the intended outcome was known. AI was also used to assist with understanding some variables in the rental bond dataset with unclear meanings.
+
+Examples of prompts used include:
+- "What does this error message mean?"
+- "How does this Python function work?"
+- "How can I implement this task in Python?"
+- "What does this column in the rental bond dataset represent?"
+
+Generative AI tools and associated responses were used as guidance and were reviewed and adapted by group members before being integrated into the project.
