@@ -38,6 +38,8 @@ The rental bond dataset was published by the The Ministry of Business, Innovatio
 Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geographic boundaries as defined by Stats NZ and used for reporting population and demographic data ([Stats NZ, 2026](#StatsNZ-2026)).
 'The SA2 geography aims to reflect communities that interact together socially and economically. In populated areas, SA2s generally contain similar-sized populations. SA2s in city council areas generally have a population of 2,000–4,000 residents while SA2s in district council areas generally have a population of 1,000–3,000 residents.' ([Stats NZ, 2019](#StatsNZ-2019))
 
+For the translation of SA2-Code into city name, the "Dwellings dataset" from Christchurch City Council has been used. ([Christchurch City Council, n.d.](#CCC-nd))
+
 **Data Dictionary** 
 | Field Name | Data Type | Description |
 |---|---|---|
@@ -56,10 +58,10 @@ Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geo
 
 *Notes:* <sup>3</sup>Definition of marked items created with supportof Google Gemini due to lack of information or clarity on website.
 
-## Licence
-The Airbnb raw data is made available under a Creative Commons licence by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
+## License
+The Airbnb raw data is made available under a Creative Commons license by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
 
-The rental bond raw data is made available under a Creative Commons licence by The Ministry of Business, Innovation and Employment: [https://creativecommons.org/licenses/by/3.0/nz/](https://creativecommons.org/licenses/by/3.0/nz/).
+The rental bond raw data is made available under a Creative Commons license by The Ministry of Business, Innovation and Employment: [https://creativecommons.org/licenses/by/3.0/nz/](https://creativecommons.org/licenses/by/3.0/nz/).
 
 # References & Sources  
 <a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026, from [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
@@ -73,3 +75,5 @@ The rental bond raw data is made available under a Creative Commons licence by T
 <a id="StatsNZ-2026"></a>Stats NZ. (2026, September 3). *Statistical Area 2 2019 (generalised)*. Retrieved September 10, 2026, from [https://datafinder.stats.govt.nz/layer/98970-statistical-area-2-2019-generalised/](https://datafinder.stats.govt.nz/layer/98970-statistical-area-2-2019-generalised/)
 
 <a id="StatsNZ-2019"></a>Stats NZ. (2019, July 25). *Statistical Area 2 2029 V1.0.0*. Retrieved September 10, 2026, from [https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo](https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo)
+
+<a id="CCC-nd"></a>Christchurch City Council. (n.d.). *Christchurch and Canterbury census data*. Retrieved September 14, 2026, from: [https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data](https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data)
