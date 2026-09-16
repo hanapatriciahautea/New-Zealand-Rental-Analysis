@@ -38,3 +38,18 @@ The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026]
 <a id="cox-2026"></a>Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
 
 <a id="cox-2022"></a>Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
+
+OpenAI. (2026). *ChatGPT*. Retrieved September 16, 2026, [https://chatgpt.com/](https://chatgpt.com/)
+
+
+# Generative AI Use
+
+Generative AI tools, including ChatGPT (OpenAI, 2026), were used as supplementary learning and troubleshooting resources during this project. Specifically, AI was used to help explain Python functions and package documentation, interpret error messages, assist with debugging, and provide guidance with the implementation of code where the intended outcome was known. AI was also used to assist with understanding some variables in the rental bond dataset with unclear meanings.
+
+Examples of prompts used include:
+- "What does this error message mean?"
+- "How does this Python function work?"
+- "How can I implement this task in Python?"
+- "What does this column in the rental bond dataset represent?"
+
+Generative AI tools and associated responses were used as guidance and were reviewed and adapted by group members before being integrated into the project.
