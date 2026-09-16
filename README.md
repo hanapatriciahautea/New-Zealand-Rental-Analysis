@@ -31,6 +31,14 @@ The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026]
 
 *Notes:* <sup>1</sup>Calculated from other fields. <sup>2</sup>Looking 365 nights in the future.
 
+### Approach to cleaning
+1. Read in multiple CSV files to a pandas dataframe.
+2. Filter the rows by dropping all those which don't have the value of "*Christchurch*" in the `neighbourhood_group` column.
+3. Manually drop the `licence` column, because it is empty.
+4. Convert the `last_review` column from strings (e.g., "2020-01-22") to valid datetime format, using `pd.to_datetime()`.
+
+Each function in the pipeline is configured to print (to the console) a summary of what it did and how many columns or rows were affected, or to clarify that no change was made. The row filtering step reports the number of rows 'dropped', alongside the initial and final row counts.
+
 
 ### 2. Rental bond data
 The rental bond dataset was published by the The Ministry of Business, Innovation and Employment and made available on their Tenancy Services website. The data has been last updated on 10th September 2026 and it has been retrieve for this project on 10th September 2026. Specifically, the "Detailed quarterly report, January 2020 to April 2026" is used here ([The Ministry of Business, Innovation and Employment, 2026](#MBIE-2026)).
@@ -39,17 +47,6 @@ Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geo
 'The SA2 geography aims to reflect communities that interact together socially and economically. In populated areas, SA2s generally contain similar-sized populations. SA2s in city council areas generally have a population of 2,000–4,000 residents while SA2s in district council areas generally have a population of 1,000–3,000 residents.' ([Stats NZ, 2019](#StatsNZ-2019))
 
 For the translation of SA2-Code into city name, the "Dwellings dataset" from Christchurch City Council has been used. ([Christchurch City Council, n.d.](#CCC-nd))
-
-#### Approach to cleaning
-The Rental Bond dataset has been cleaned to match the Airbnb dataset.
-1. Location Id NULL and -99 have been removed from the dataset
-2. TimeFrame has been split into Year and Month.
-3. Converted the Month into month range representing a quarter.
-4. Removed any TimeFrame for which there is no complete set of data matching with Airbnb.
-5. Used Dwellings_SA2 dataset to translate Location Id into City names.
-6. Removed any non-Christchurch data
-7. Renamed columns to match Airbnb data
-8. Matched and renamed dwelling types to Airbnb room types
 
 **Data Dictionary** 
 | Field Name | Data Type | Description |
@@ -68,6 +65,18 @@ The Rental Bond dataset has been cleaned to match the Airbnb dataset.
 |`Log Std Dev Weekly Rent`| text -> should be numeric | The standard deviation of the natural logarithm of weekly rents. This is a statistical metric used to evaluate the relative dispersion or variance of rental costs within the sample, normalizing for scale across different price levels.<sup>3</sup> |
 
 *Notes:* <sup>3</sup>Definition of marked items created with supportof Google Gemini due to lack of information or clarity on website.
+
+### Approach to cleaning
+The Rental Bond dataset has been cleaned to match the Airbnb dataset.
+1. Location Id NULL and -99 have been removed from the dataset
+2. TimeFrame has been split into Year and Month.
+3. Converted the Month into month range representing a quarter.
+4. Removed any TimeFrame for which there is no complete set of data matching with Airbnb.
+5. Used Dwellings_SA2 dataset to translate Location Id into City names.
+6. Removed any non-Christchurch data
+7. Renamed columns to match Airbnb data
+8. Matched and renamed dwelling types to Airbnb room types
+
 
 ## License
 The Airbnb raw data is made available under a Creative Commons license by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
