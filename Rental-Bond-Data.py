@@ -45,10 +45,12 @@ def clean_rental(df, df2):
     #Timeframe OCT 2025 to MAR 2026 represents the timeframe, where we have complete month data for Airbnb and rental
     target_timeframes = pd.to_datetime(["2026-01-01", "2026-04-01"])
     df = df[df['TimeFrame'].isin(target_timeframes)]
+    
+    # Drop unnecessary columns from 'Dwelling_SA2' and deduplicate
+    df2 = df2[['SA2Code', 'TAName']].drop_duplicates()
 
     #merge rental data with SA2 data. New columns SA2Code and TAName, when Location Id and SA2Code match
-    df = pd.merge(df, 
-                  df2[['SA2Code', 'TAName']],
+    df = df.merge(df2[['SA2Code', 'TAName']],
                   left_on= 'Location Id',
                   right_on= 'SA2Code',
                   how= 'left'
@@ -69,7 +71,7 @@ def clean_rental(df, df2):
             "Flat": "Entire home/apt",
             "Apartment": "Entire home/apt",
             "Boarding House": "Private room",
-            "Room": "shared room"}
+            "Room": "Private room"}
     df['Dwelling Type'] = df['Dwelling Type'].replace(dwelling_change)
 
     return df
@@ -101,14 +103,18 @@ def main():
     rental_data = "Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv"
     SA2_data = "Dwelling_SA2.csv"
     # Load and pre-process the file(s)
+    #df_rental = read_csv_file(rental_data, ",") 
+    #df_SA2 = read_csv_file(SA2_data, ";")   
     df_rental = read_csv_file(rental_data, ",") 
-    df_SA2 = read_csv_file(SA2_data, ";")   
+    df_SA2 = read_csv_file(SA2_data, ",")
 
     df_rental_cleaned = clean_rental(df_rental, df_SA2)
 
-    #summary_stats(df_rental_cleaned)
+    summary_stats(df_rental_cleaned)
 
-    #print(df_rental_cleaned.head(n=100))
+    print(df_rental_cleaned.head(n=100))
+
+    df_rental_cleaned.to_csv("Merged-Data.csv", index=False)
     
 if __name__ == "__main__":
     main()
