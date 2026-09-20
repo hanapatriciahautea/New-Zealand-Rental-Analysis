@@ -102,10 +102,9 @@ def cleaning_task(df, cleaning_mode = None, target_columns = []):
     return df, change_log
 
 
-def filter_rows(df):
+def filter_locations(df):
     '''Drops all the rows which don't refer to Christchurch'''
     start_length = df.shape[0]
-    
     neighbourhood_group_options = ["Christchurch City"]    #The locations to keep
     
     # Keep only the rows which mention the above
@@ -115,6 +114,20 @@ def filter_rows(df):
     print(f"Dropped {start_length - end_length} rows (down from {start_length} to {end_length} rows).")
     return df
 
+def filter_timeframe(df, start_date, end_date):
+    '''Drops rows which aren't inside the target date-range (inclusive).'''
+    # Convert date strings to datetime format (as used in target col)
+    start_date_conv = pd.to_datetime(start_date, format='%Y_%m_%d')
+    end_date_conv   = pd.to_datetime(end_date, format='%Y_%m_%d')
+    
+    # Select and return only the rows which don't fall inside the date range
+    start_length = df.shape[0]
+    df = df[(df['publish_date'] >= start_date_conv) & (df['publish_date'] <= end_date_conv)]
+    end_length = df.shape[0]
+
+    # Report the actions then return
+    print(f"Dropped {start_length - end_length} rows. {end_length}, remain, between {start_date} and {end_date}.")
+    return df
 
 def convert_categoricals(df):
     '''Convert string and integer variables into categorical variables; function provides all specifications so will need amending to alter expected behaviours.'''
@@ -279,8 +292,9 @@ def main():
                                    "listings_2026_03_17.csv","listings_2026_02_13.csv","listings_2026_01_16.csv",
                                    "listings_2025_12_11.csv","listings_2025_11_07.csv","listings_2025_10_05.csv"])    
                                    # Import & merge multiple files; filenames should be "listings_YYYY_MM_DD.csv"
-    df = filter_rows(df)
+    df = filter_locations(df)
     df = do_basic_cleaning(df)
+    df = filter_timeframe(df, start_date="2020_01_01", end_date="2026_04_30")
     df = convert_categoricals(df)
 
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
