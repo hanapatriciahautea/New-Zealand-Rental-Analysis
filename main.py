@@ -1,6 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import requests
+from multiprocessing import Pool
+from tqdm import tqdm
+import os
 
 #### Parameters and Helper Variables
 err_wrap = "!!!!"
@@ -281,6 +285,65 @@ def option_selection(options):
         selection = int(input(prompt))
     return selection
 
+# GETTING AREA CODES -------------------------------------------------------------------------------------------------------
+def get_area_code(lat, lon, api_key, layer_id):
+    '''
+    Queries the Koordinates API for a single latitude/longitude pair and returns the matching area code.
+    '''
+    url = "https://koordinates.com/services/query/v1/vector.json"
+    params = {
+        "key": api_key,
+        "layer": layer_id,
+        "x": lon,
+        "y": lat,
+        "max_results": 1,
+        "radius": 1000,
+        "with_field_names": "true"
+    }
+    try:
+        response = requests.get(url, params = params)
+        response.raise_for_status()
+        data = response.json()
+        features = data['vectorQuery']['layers'][str(layer_id)]['features']
+        if not features:
+            return None # if no match is found within the radius
+        return features[0]['properties']['SA22019_V1_00'] # extract the area code field
+    except Exception as e:
+        print(f"Error for lat={lat}, lon={lon}: {e}")
+        return None
+
+def query_wrapper(args):
+    '''
+    Helper function so multiprocessing.Pool can pass multiple arguments using .imap().
+    '''
+    lat, lon, api_key, layer_id = args
+    return get_area_code(lat, lon, api_key, layer_id)
+
+def add_area_codes(df, api_key, layer_id, output_path='listings_with_area_codes.csv'):
+    '''
+    Adds a column for area code to the dataframe by querying a Koordinates API for each Airbnb listing's latitude and longitude
+    using multiprocessing to assist with 28,000+ calls, then saves the result to a CSV file.
+    '''
+    # adding a safeguard to prevent re-running the API call
+    if os.path.exists(output_path):
+        print("There is already an existing file at {output_path}. Loading the saved results instead of re-querying the API.")
+        return pd.read_csv(output_path)
+    else:
+        print(f"No existing file has been found. Running API queries for {len(df)} rows...")
+
+        # build list of arguments for each row
+        tasks = [(row['latitude'], row['longitude'], api_key, layer_id) for _, row in df.iterrows()]
+
+        results = []
+        with Pool(processes=5) as pool:
+            for result in tqdm(pool.imap(query_wrapper, tasks), total=len(tasks)):
+                results.append(result)
+
+        df['area_code'] = results
+        df.to_csv(output_path, index=False)
+        print(f"The results have been saved to {output_path}.")
+        return df
+
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 
 def main():
@@ -296,9 +359,10 @@ def main():
     df = do_basic_cleaning(df)
     df = filter_timeframe(df, start_date="2020_01_01", end_date="2026_04_30")
     df = convert_categoricals(df)
+    df = add_area_codes(df, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
 
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
-    
+
     options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Quit']
     
     run_programme = True
