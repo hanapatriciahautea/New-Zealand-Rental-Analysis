@@ -1,5 +1,7 @@
 # Data Files
 *.csv
+*.xslx
+*.xsl
 
 # Personal testing files
 plotting and analysis test.py
