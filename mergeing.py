@@ -16,7 +16,7 @@ def clean_airbnb(df):
     df['months-year'] = df['months'].astype(str) + "-" + df['year'].astype(str)
 
     #remove all data before Q4 2025 and after Q1 2026 to match rental bond dataset
-    df = df[(df['months-year'] == 'OCT-DEC-2025') | (df['months-year'] == 'JAN-MAR-2025')]
+    df = df[(df['months-year'] == 'OCT-DEC-2025') | (df['months-year'] == 'JAN-MAR-2026')]
 
     #merge by quarters and find mean of price
     df_merge_areas = df.groupby(['year', 'months', 'area_code'], as_index=False)['price'].mean()
