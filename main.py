@@ -6,7 +6,6 @@ from multiprocessing import Pool
 from tqdm import tqdm
 import os
 import numpy as np
-import openpyxl
 
 #### Parameters and Helper Variables
 err_wrap = "!!!!"
@@ -220,9 +219,10 @@ def hist_dates(df):
     '''
     Visualising the distribution of the number of days since the last review.
     '''
+    df['last_review'] = pd.to_datetime(df['last_review'])
+    df['publish_date'] = pd.to_datetime(df['publish_date'])
 
     df['days_since_last_review'] = df['publish_date'] - df['last_review']
-
     df['days_since_last_review'] = (df['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
 
     fig, axs = plt.subplots(2, 1, figsize=(10, 10))
@@ -287,7 +287,7 @@ def option_selection(options):
         selection = int(input(prompt))
     return selection
 
-# GETTING AREA CODES -------------------------------------------------------------------------------------------------------
+# GETTING AREA CODES VIA API KEY -------------------------------------------------------------------------------------------------
 def get_area_code(lat, lon, api_key, layer_id):
     '''
     Queries the Koordinates API for a single latitude/longitude pair and returns the matching area code.
@@ -323,13 +323,13 @@ def query_wrapper(args):
 
 def add_area_codes(df, api_key, layer_id, output_path='listings_with_area_codes.csv'):
     '''
-    Adds a column for area code to the dataframe by querying a Koordinates API for each Airbnb listing's latitude and longitude
-    using multiprocessing to assist with 28,000+ calls, then saves the result to a CSV file.
+    Adds a column for area code to the dataframe from querying a Koordinates API for each Airbnb listing's latitude and longitude
+    using multiprocessing & saves the result to a CSV file.
     '''
     # adding a safeguard to prevent re-running the API call
     if os.path.exists(output_path):
-        print("There is already an existing file at {output_path}. Loading the saved results instead of re-querying the API.")
         return pd.read_csv(output_path)
+    
     else:
         print(f"No existing file has been found. Running API queries for {len(df)} rows...")
 
@@ -346,13 +346,17 @@ def add_area_codes(df, api_key, layer_id, output_path='listings_with_area_codes.
         print(f"The results have been saved to {output_path}.")
         return df
 
-# ADDING WARD CODES ----------------------------------------------------------------------------------------------------
+#  ADDING WARD CODES -------------------------------------------------------------------------------------------------------------------------------
 def add_ward_codes(df, ward_concordance_path='meshblock_2019_to_ward_2019.xlsx', 
                    sa2_concordance_path='meshblock_2019_to_sa2_2019.xlsx', output_path='listings_with_area_codes.csv'):
     '''
-    Groups SA2 area codes into larger Ward areas by joining two Stats NZ meshblock files (Meshblock-to-Ward and Meshblock-to-SA2)
-    on the shared meshblock code, then merging the resulting SA2-to-Ward onto the Airbnb dataframe using 'area_code'.
+    Groups SA2 area codes into Ward areas by joining two Stats NZ meshblock files (Meshblock-to-Ward and Meshblock-to-SA2),
+    then merging the resulting SA2-to-Ward onto the Airbnb dataframe using 'area_code'.
     '''
+    # adding a safeguard to prevent re-merging 
+    if 'ward_code' in df.columns:
+        return df
+
     mb_to_ward = pd.read_excel(ward_concordance_path, skiprows=9)
     mb_to_sa2 = pd.read_excel(sa2_concordance_path, skiprows=9)
 
@@ -376,6 +380,7 @@ def add_ward_codes(df, ward_concordance_path='meshblock_2019_to_ward_2019.xlsx',
 
     return df
 
+#  ANSWERS TO DELIVERABLE 5 ------------------------------------------------------------------------------------------------------------------------------
 def get_answers_del_5(df):
     '''produce answers to deliverable 5'''
 
@@ -418,9 +423,9 @@ def get_answers_del_5(df):
     ward_with_largest_lowShort_highLong = summary.loc[summary["Diff low short - high long"].idxmax(), 'ward_name']
     ward_max_2 = summary.loc[summary['ward_name'] == ward_with_largest_lowShort_highLong,'Diff low short - high long'].iloc[0]
 
-    print(f'The ward with the highest difference of mean short vs mean long term rental is {ward_with_largest_mean_difference[0]} / {ward_max_diff:.2f}.')
-    print(f'The ward highest difference between lowest long term rental vs highest short term rental price is {ward_with_largest_lowLong_highShort} / {ward_max_1:.2f}.')
-    print(f'The ward highest difference between lowest short term rental vs highest long term rental price is  {ward_with_largest_lowShort_highLong} / {ward_max_2:.2f}.')
+    print(f'The ward with the highest difference of mean short vs mean long term rental is {ward_with_largest_mean_difference} / {ward_max_diff:.2f} NZD.')
+    print(f'The ward highest difference between lowest long term rental vs highest short term rental price is {ward_with_largest_lowLong_highShort} / {ward_max_1:.2f} NZD.')
+    print(f'The ward highest difference between lowest short term rental vs highest long term rental price is  {ward_with_largest_lowShort_highLong} / {ward_max_2:.2f} NZD.')
     print()
 
     print('Compare how many AirBnBs and rental properties we have in each location.')
@@ -446,8 +451,8 @@ def main():
     
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
     
-    df_airbnb = add_area_codes(df, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
-    df_airbnb = add_ward_codes(df_airbnb)
+    df = add_area_codes(df, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
+    df = add_ward_codes(df)
  
     options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Deliverable 5', 'Quit']
     
@@ -465,7 +470,7 @@ def main():
         elif user_input == 3:
             top_10_reviews(df)
         elif user_input == 4:
-            get_answers_del_5(df_airbnb)
+            get_answers_del_5(df)
         elif user_input == 5:
             run_programme = False    #Quits the programme gracefully
             print('\nProgram closed.\n')
