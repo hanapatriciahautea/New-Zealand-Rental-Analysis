@@ -344,6 +344,36 @@ def add_area_codes(df, api_key, layer_id, output_path='listings_with_area_codes.
         print(f"The results have been saved to {output_path}.")
         return df
 
+# ADDING WARD CODES ----------------------------------------------------------------------------------------------------
+def add_ward_codes(df, ward_concordance_path='meshblock_2019_to_ward_2019.xlsx', 
+                   sa2_concordance_path='meshblock_2019_to_sa2_2019.xlsx', output_path='listings_with_area_codes.csv'):
+    '''
+    Groups SA2 area codes into larger Ward areas by joining two Stats NZ meshblock files (Meshblock-to-Ward and Meshblock-to-SA2)
+    on the shared meshblock code, then merging the resulting SA2-to-Ward onto the Airbnb dataframe using 'area_code'.
+    '''
+    mb_to_ward = pd.read_excel(ward_concordance_path, skiprows=9)
+    mb_to_sa2 = pd.read_excel(sa2_concordance_path, skiprows=9)
+
+    # join on the shared meshblock code
+    sa2_to_ward = mb_to_sa2.merge(
+        mb_to_ward,
+        on='Source Code',
+        suffixes=('_sa2', '_ward')
+    )
+
+    sa2_to_ward = sa2_to_ward[['Target Code_sa2', 'Descriptor.1_sa2', 'Target Code_ward', 'Descriptor.1_ward']].drop_duplicates()
+    sa2_to_ward.columns = ['sa2_code', 'sa2_name', 'ward_code', 'ward_name']
+
+    df = df.merge(sa2_to_ward, left_on='area_code', right_on='sa2_code', how='left')
+
+    print(f"Number of unique wards found in Christchurch listings: {df['ward_code'].nunique()}")
+    print(f"Listings with no matching ward: {df['ward_code'].isnull().sum()}")
+
+    df.to_csv(output_path, index=False)   # updating csv with new ward columns
+    print(df[['area_code', 'sa2_name', 'ward_code', 'ward_name']].head(10))
+
+    return df
+
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 
 def main():
@@ -360,6 +390,7 @@ def main():
     df = filter_timeframe(df, start_date="2020_01_01", end_date="2026_04_30")
     df = convert_categoricals(df)
     df = add_area_codes(df, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
+    df = add_ward_codes(df)
 
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
 
