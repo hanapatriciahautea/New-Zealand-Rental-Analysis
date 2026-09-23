@@ -19,8 +19,7 @@ def clean_airbnb(df):
     df = df[(df['months-year'] == 'OCT-DEC-2025') | (df['months-year'] == 'JAN-MAR-2026')]
 
     #merge by quarters and find mean of price
-    df_merge_areas = df.groupby(['year', 'months', 'area_code'], as_index=False)['price'].mean()
-    df_merge_areas = df_merge_areas.rename(columns={'price': 'mean_price'})
+    df_merge_areas = df.groupby(['year', 'months', 'area_code'], as_index=False).agg(airbnb_mean_price=('price', 'mean'),total_airbnb_properties=('price', 'count'))
     df_merge_areas = df_merge_areas.rename(columns={'area_code': 'Location Id'})
 
     print(df_merge_areas.head())
@@ -31,6 +30,7 @@ def clean_airbnb(df):
 
 def clean_rental(df):
     df = df[(df['Dwelling Type'] == 'ALL') & (df['Number Of Beds'] == 'ALL')]
+    df['No_Rental_Properties'] = df['Total Bonds'] + df['Active Bonds'] + df['Closed Bonds']
     df.to_csv("rental_ready_for_merge.csv", index=False)
     return df
 
