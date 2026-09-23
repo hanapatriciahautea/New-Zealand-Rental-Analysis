@@ -1,6 +1,11 @@
 # Data Files
 *.csv
+<<<<<<< HEAD
 *.xlsx
+=======
+*.xslx
+*.xsl
+>>>>>>> main
 
 # Personal testing files
 plotting and analysis test.py
