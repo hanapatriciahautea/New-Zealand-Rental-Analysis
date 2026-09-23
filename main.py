@@ -389,9 +389,9 @@ def get_answers_del_5(df):
     print("In which part of Christchurch can we observe the craziest (largest) gap between short- and long-term rental prices?")
     print()
 
-    #mark each row by short or long term rent (short = less than 28 days)
+    #mark each row by short or long term rent (short = less than 90 days)
 
-    df['short_or_long'] = np.where(df['minimum_nights'] >= 28, 'long', 'short')
+    df['short_or_long'] = np.where(df['minimum_nights'] >= 90, 'long', 'short')
     
     summary = pd.pivot_table(
         df, 
