@@ -5,6 +5,7 @@ import requests
 from multiprocessing import Pool
 from tqdm import tqdm
 import os
+import numpy as np
 
 #### Parameters and Helper Variables
 err_wrap = "!!!!"
@@ -374,6 +375,58 @@ def add_ward_codes(df, ward_concordance_path='meshblock_2019_to_ward_2019.xlsx',
 
     return df
 
+def get_answers_del_5(df):
+    '''produce answers to deliverable 5'''
+
+    print()
+    print("What’s the median AirBnB price in Christchurch Central (Location ID 326600)?")
+    print()
+
+    airbnb_median = df.loc[df['area_code'] == 326600, 'price'].median()
+
+    print(f'The median Airbnb price in Christchurch Central is {airbnb_median} NZD.')
+    print()
+    print("In which part of Christchurch can we observe the craziest (largest) gap between short- and long-term rental prices?")
+    print()
+
+    #mark each row by short or long term rent (short = less than 28 days)
+
+    df['short_or_long'] = np.where(df['minimum_nights'] >= 28, 'long', 'short')
+    
+    summary = pd.pivot_table(
+        df, 
+        values='price', 
+        index='ward_name', 
+        columns='short_or_long', 
+        aggfunc=['min', 'max', 'mean'])
+
+    # Flatten the multi-level columns to match your exact requested names
+    summary.columns = ['lowest price long', 'lowest price short', 
+    'highest price long', 'highest price short', 'long mean', 'short mean']
+
+    summary['Mean Difference'] = abs(summary['long mean'] - summary['short mean'])
+    summary['Diff low long - high short'] = abs(summary['lowest price long'] - summary['highest price short'])
+    summary['Diff low short - high long'] = abs(summary['lowest price short'] - summary['highest price long'])
+
+    summary = summary.reset_index()
+
+    ward_with_largest_mean_difference = summary.loc[summary["Mean Difference"].idxmax(), 'ward_name']
+    ward_max_diff = summary.loc[summary['ward_name'] == ward_with_largest_mean_difference,'Mean Difference'].iloc[0]
+    ward_with_largest_lowLong_highShort = summary.loc[summary["Diff low long - high short"].idxmax(), 'ward_name']
+    ward_max_1 = summary.loc[summary['ward_name'] == ward_with_largest_lowLong_highShort,'Diff low long - high short'].iloc[0]
+    ward_with_largest_lowShort_highLong = summary.loc[summary["Diff low short - high long"].idxmax(), 'ward_name']
+    ward_max_2 = summary.loc[summary['ward_name'] == ward_with_largest_lowShort_highLong,'Diff low short - high long'].iloc[0]
+
+    print(f'The ward with the highest difference of mean short vs mean long term rental is {ward_with_largest_mean_difference[0]} / {ward_max_diff:.2f}.')
+    print(f'The ward highest difference between lowest long term rental vs highest short term rental price is {ward_with_largest_lowLong_highShort} / {ward_max_1:.2f}.')
+    print(f'The ward highest difference between lowest short term rental vs highest long term rental price is  {ward_with_largest_lowShort_highLong} / {ward_max_2:.2f}.')
+    print()
+
+    print('Compare how many AirBnBs and rental properties we have in each location.')
+    print()
+    print('See "airbnb_rental_merged.csv" for details.')
+    print()
+
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 
 def main():
@@ -389,12 +442,13 @@ def main():
     df = do_basic_cleaning(df)
     df = filter_timeframe(df, start_date="2020_01_01", end_date="2026_04_30")
     df = convert_categoricals(df)
-    df = add_area_codes(df, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
-    df = add_ward_codes(df)
-
+    
     df.to_csv("concatenated_listings.csv", index=False)    #Write back to disk, omitting index column
-
-    options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Quit']
+    
+    df_airbnb = add_area_codes(df, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
+    df_airbnb = add_ward_codes(df_airbnb)
+ 
+    options = ['Summary statistics', 'Price histogram', 'Days since last review histogram', 'Top 10 percent of reviews table', 'Deliverable 5', 'Quit']
     
     run_programme = True
     while run_programme:
@@ -410,6 +464,8 @@ def main():
         elif user_input == 3:
             top_10_reviews(df)
         elif user_input == 4:
+            get_answers_del_5(df_airbnb)
+        elif user_input == 5:
             run_programme = False    #Quits the programme gracefully
             print('\nProgram closed.\n')
 
