@@ -48,6 +48,8 @@ Note: The dataset uses Statistical Area 2 2019 (SA2-2019), which is a set of geo
 
 For the translation of SA2-Code into city name, the "Dwellings dataset" from Christchurch City Council has been used. ([Christchurch City Council, n.d.](#CCC-nd))
 
+The definition of *short-term* and *long-term* tenancy is based on The Tenancy Services' definition of 'short fixed-term' and 'fixed-term', respectively ([Tenancy Services, 2026](#tenancyServices-2026)).
+
 **Data Dictionary** 
 | Field Name | Data Type | Description |
 |---|---|---|
@@ -84,6 +86,8 @@ The Airbnb raw data is made available under a Creative Commons license by Inside
 The rental bond raw data is made available under a Creative Commons license by The Ministry of Business, Innovation and Employment: [https://creativecommons.org/licenses/by/3.0/nz/](https://creativecommons.org/licenses/by/3.0/nz/).
 
 # References & Sources  
+<a id="CCC-nd"></a>Christchurch City Council. (n.d.). *Christchurch and Canterbury census data*. Retrieved September 14, 2026, from: [https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data](https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data)
+
 <a id="cox-nd"></a>Cox, M. (n.d.). *Get the data*. InsideAirbnb. Retrieved July 30, 2026, from [https://insideairbnb.com/get-the-data/](https://insideairbnb.com/get-the-data/)  
 
 <a id="cox-2026"></a>Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, from [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
@@ -92,13 +96,13 @@ The rental bond raw data is made available under a Creative Commons license by T
 
 <a id="MBIE-2026"></a>The Ministry of Business, Innovation and Employment. (2026, September 10). *Rental bond data*. Retrieved September 10, 2026, from [https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/](https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/)
 
+OpenAI. (2026). *ChatGPT*. Retrieved September 16, 2026, [https://chatgpt.com/](https://chatgpt.com/)
+
 <a id="StatsNZ-2026"></a>Stats NZ. (2026, September 3). *Statistical Area 2 2019 (generalised)*. Retrieved September 10, 2026, from [https://datafinder.stats.govt.nz/layer/98970-statistical-area-2-2019-generalised/](https://datafinder.stats.govt.nz/layer/98970-statistical-area-2-2019-generalised/)
 
 <a id="StatsNZ-2019"></a>Stats NZ. (2019, July 25). *Statistical Area 2 2029 V1.0.0*. Retrieved September 10, 2026, from [https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo](https://aria.stats.govt.nz/aria/?_ga=2.64351014.862326229.1560897363-450849000.1560897363#ClassificationView:uri=http://stats.govt.nz/cms/ClassificationVersion/VxisJjBFG2PtagMo)
 
-<a id="CCC-nd"></a>Christchurch City Council. (n.d.). *Christchurch and Canterbury census data*. Retrieved September 14, 2026, from: [https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data](https://ccc.govt.nz/culture-and-community/statistics-and-facts/census-data)
-
-OpenAI. (2026). *ChatGPT*. Retrieved September 16, 2026, [https://chatgpt.com/](https://chatgpt.com/)
+<a id="tenancyServices-2026"></a>Tenancy Services. (2026, September 23). *Periodic or fixed-term tenancy* [https://www.tenancy.govt.nz/starting-a-tenancy/types-of-tenancies/periodic-or-fixed-term-tenancy](https://www.tenancy.govt.nz/starting-a-tenancy/types-of-tenancies/periodic-or-fixed-term-tenancy)
 
 
 # Generative AI Use
