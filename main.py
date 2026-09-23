@@ -5,6 +5,7 @@ import requests
 from multiprocessing import Pool
 from tqdm import tqdm
 import os
+import openpyxl
 
 #### Parameters and Helper Variables
 err_wrap = "!!!!"
