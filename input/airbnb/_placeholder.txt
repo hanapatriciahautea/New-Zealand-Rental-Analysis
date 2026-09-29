@@ -1,0 +1,2 @@
+This file exists to ensure Github picks up on the folder, even if it's empty.
+(Usually as a consequence of the .gitignore file working as intended!)
