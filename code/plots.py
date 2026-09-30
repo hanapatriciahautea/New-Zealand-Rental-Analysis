@@ -83,4 +83,67 @@ def plot_price_diffs(summary):
     plt.ylabel('Ward')
     plt.tight_layout()
     plt.show()
-    
+
+# Sanity Checks -----------------------------------------------------------------------------------------------------------
+
+def sanity_check_hist_prices(df):
+    '''
+    Confirms the price data and outlier threshold going into hist_prices()
+    behave as expected before the (blocking) plot is drawn.
+    '''
+    print("=== Sanity Check: hist_prices ===")
+    assert 'price' in df.columns, "FAIL: 'price' column missing"
+    assert (df['price'] >= 0).all(), "FAIL: negative prices found - price column may be corrupted"
+
+    threshold = df['price'].quantile(0.99)
+    df_filtered = df[df['price'] < threshold]
+    assert len(df_filtered) < len(df), "FAIL: 99th percentile filter removed no rows - check for extreme outlier"
+    print(f"PASS: 99th percentile threshold = {threshold:.2f}, filtered {len(df) - len(df_filtered)} outlier rows")
+    print()
+
+
+def sanity_check_hist_dates(df):
+    '''
+    Confirms date parsing and the negative-day filter in hist_dates() are
+    still behaving as expected.
+    '''
+    print("=== Sanity Check: hist_dates ===")
+    last_review = pd.to_datetime(df['last_review'], errors='coerce')
+    publish_date = pd.to_datetime(df['publish_date'], errors='coerce')
+
+    n_bad_dates = last_review.isnull().sum() + publish_date.isnull().sum()
+    if n_bad_dates > 0:
+        print(f"WARNING: {n_bad_dates} unparseable date values found")
+    else:
+        print("PASS: all last_review and publish_date values parsed successfully")
+
+    days_diff = (publish_date - last_review).dt.total_seconds() / (24 * 60 * 60)
+    n_negative = (days_diff < 0).sum()
+    print(f"INFO: {n_negative} rows have a negative days_since_last_review (excluded from plot)")
+
+    assert (days_diff.dropna() >= 0).sum() > 0, "FAIL: no valid non-negative date differences found - plot would be empty"
+    print("PASS: at least some valid non-negative date differences exist to plot")
+    print()
+
+
+def sanity_check_plot_price_diffs(summary):
+    '''
+    Confirms the 'summary' table passed into plot_price_diffs() has the
+    columns and value coverage the plot depends on.
+    '''
+    print("=== Sanity Check: plot_price_diffs ===")
+    required_cols = {'ward_name', 'Mean Difference'}
+    missing = required_cols - set(summary.columns)
+    assert not missing, f"FAIL: summary is missing expected columns: {missing}"
+    print("PASS: summary contains required columns")
+
+    n_wards = summary['ward_name'].nunique()
+    assert n_wards > 0, "FAIL: no wards present in summary"
+    print(f"PASS: {n_wards} wards present in summary for plotting")
+
+    n_valid = summary['Mean Difference'].notnull().sum()
+    if n_valid < n_wards:
+        print(f"WARNING: only {n_valid}/{n_wards} wards have a valid Mean Difference (others likely have no long-term listings)")
+    else:
+        print("PASS: every ward has a valid Mean Difference value")
+    print()
