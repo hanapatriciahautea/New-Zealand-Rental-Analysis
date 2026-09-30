@@ -1,10 +1,15 @@
 #### This file provides features to load location data from the Koordinates API ####
 
-import pandas as pd
 import os
+import pandas as pd
 import requests
 from multiprocessing import Pool
 from tqdm import tqdm
+
+# Housekeeping
+base_dir = os.path.dirname(os.path.abspath(__file__))
+input_path  = os.path.join(base_dir, "../input")
+output_path = os.path.join(base_dir, "../output")
 
 
 ## GETTING AREA CODES VIA API KEY ------------------------------------------------------------------------------------------------
@@ -42,14 +47,14 @@ def query_wrapper(args):
     lat, lon, api_key, layer_id = args
     return get_area_code(lat, lon, api_key, layer_id)
 
-def add_area_codes(df, api_key, layer_id, output_path='../output/listings_with_area_codes.csv'):
+def add_area_codes(df, api_key, layer_id, output_file=os.path.join(output_path, 'listings_with_area_codes.csv')):
     '''
     Adds a column for area code to the dataframe from querying a Koordinates API for each Airbnb listing's latitude and longitude
     using multiprocessing & saves the result to a CSV file.
     '''
     # adding a safeguard to prevent re-running the API call
-    if os.path.exists(output_path):
-        return pd.read_csv(output_path)
+    if os.path.exists(output_file):
+        return pd.read_csv(output_file)
     
     else:
         print(f"No existing file has been found. Running API queries for {len(df)} rows...")
@@ -63,14 +68,15 @@ def add_area_codes(df, api_key, layer_id, output_path='../output/listings_with_a
                 results.append(result)
 
         df['area_code'] = results
-        df.to_csv(output_path, index=False)
-        print(f"The results have been saved to {output_path}.")
+        df.to_csv(output_file, index=False)
+        print(f"The results have been saved to {output_file}.")
         return df
 
 
 ##  ADDING WARD CODES ------------------------------------------------------------------------------------------------------------------------------
-def add_ward_codes(df, ward_concordance_path='../input/airbnb/meshblock_2019_to_ward_2019.xlsx', 
-                   sa2_concordance_path='../input/airbnb/meshblock_2019_to_sa2_2019.xlsx', output_path='../output/listings_with_area_codes.csv'):
+def add_ward_codes(df, ward_concordance_file=os.path.join(input_path, 'airbnb/meshblock_2019_to_ward_2019.xlsx'), 
+                   sa2_concordance_file=os.path.join(input_path, 'airbnb/meshblock_2019_to_sa2_2019.xlsx'),
+                   output_file=os.path.join(output_path, 'listings_with_area_codes.csv')):
     '''
     Groups SA2 area codes into Ward areas by joining two Stats NZ meshblock files (Meshblock-to-Ward and Meshblock-to-SA2),
     then merging the resulting SA2-to-Ward onto the Airbnb dataframe using 'area_code'.
@@ -79,8 +85,8 @@ def add_ward_codes(df, ward_concordance_path='../input/airbnb/meshblock_2019_to_
     if 'ward_code' in df.columns:
         return df
 
-    mb_to_ward = pd.read_excel(ward_concordance_path, skiprows=9)
-    mb_to_sa2 = pd.read_excel(sa2_concordance_path, skiprows=9)
+    mb_to_ward = pd.read_excel(ward_concordance_file, skiprows=9)
+    mb_to_sa2 = pd.read_excel(sa2_concordance_file, skiprows=9)
 
     # join on the shared meshblock code
     sa2_to_ward = mb_to_sa2.merge(
@@ -97,7 +103,7 @@ def add_ward_codes(df, ward_concordance_path='../input/airbnb/meshblock_2019_to_
     print(f"Number of unique wards found in Christchurch listings: {df['ward_code'].nunique()}")
     print(f"Listings with no matching ward: {df['ward_code'].isnull().sum()}")
 
-    df.to_csv(output_path, index=False)   # updating csv with new ward columns
+    df.to_csv(output_file, index=False)   # updating csv with new ward columns
     print(df[['area_code', 'sa2_name', 'ward_code', 'ward_name']].head(10))
 
     return df
