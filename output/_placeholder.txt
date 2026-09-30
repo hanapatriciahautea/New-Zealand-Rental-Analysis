@@ -1,0 +1,2 @@
+This file exists to ensure that github generates/maintains this folder, 
+ even if it is empty or it contains only files which are on the .gitignore list.
