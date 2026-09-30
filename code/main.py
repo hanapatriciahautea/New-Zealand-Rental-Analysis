@@ -11,8 +11,9 @@ start_date = "2020_01_01"
 end_date   = "2026_04_30"
 
 # Filenames to import
-input_path = "../input/"
-output_path = "../output/"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+input_path  = os.path.join(base_dir, "../input")
+output_path = os.path.join(base_dir, "../output")
 airbnb_data = ["listings_2026_06_19.csv","listings_2026_05_23.csv","listings_2026_04_16.csv", 
                "listings_2026_03_17.csv", "listings_2026_02_13.csv","listings_2026_01_16.csv", 
                "listings_2025_12_11.csv","listings_2025_11_07.csv", "listings_2025_10_05.csv"]
@@ -46,7 +47,7 @@ def export_files(files_and_df:dict, filepath:str=output_path):
     'files_and_df' expects a dict of filename:dataset (excluding file extensions).
     '''
     for export_data, export_filename in files_and_df.items:
-        export_data.to_csv(filepath + export_filename + ".csv", index=False)
+        export_data.to_csv(os.path.join(filepath, export_filename, ".csv"), index=False)
 
     print (f"{len(files_and_df)} files output to {os.path.abspath(output_path)}")
     return None
@@ -58,23 +59,24 @@ def main():
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
     '''
     # Load the file
-    df_airbnb = read_csv_files(filenames=[input_path + filename for filename in airbnb_data])    #Import & merge multiple files
-    df_rental = read_csv_file(rental_data, ",") 
-    df_SA2 = read_csv_file(SA2_data, ",")
+    df_airbnb = wr.read_csv_files(filenames=[os.path.join(input_path, "airbnb", filename) for filename in airbnb_data])    #Import & merge multiple files
+    df_rental = wr.read_bond_file(os.path.join(input_path, "tenancy", rental_data), ",") 
+    df_sa2    = wr.read_bond_file(os.path.join(input_path, "tenancy", sa2_data), ",")
 
     # Clean the Files
-    df_airbnb = filter_locations(df_airbnb)
-    df_airbnb = do_basic_cleaning(df_airbnb)
-    df_airbnb = filter_timeframe(df_airbnb, start_date=start_date, end_date=end_date)
-    df_airbnb = convert_categoricals(df_airbnb)
-    df_rental_cleaned = clean_rental(df_rental, df_SA2)
-    
-    # Add the location data to the Airbnb data
-    df_airbnb = add_area_codes(df_airbnb, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
-    df_airbnb = add_ward_codes(df_airbnb)
- 
-    merged_df = pd.merge(rental_cleaned, airbnb_aggregated, on=['year', 'months', 'Location Id'], how='left')
+    df_airbnb = wr.filter_locations(df_airbnb)
+    df_airbnb = wr.do_basic_cleaning(df_airbnb)
+    df_airbnb = wr.filter_timeframe(df_airbnb, start_date=start_date, end_date=end_date)
+    df_airbnb = wr.convert_categoricals(df_airbnb)
 
+    # Add the location data to the Airbnb data
+    df_airbnb = lo.add_area_codes(df_airbnb, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
+    df_airbnb = lo.add_ward_codes(df_airbnb)
+    
+    # Merge the files after some final cleaning/tweaks
+    merged_df = pd.merge(df_rental_cleaned, airbnb_aggregated, on=['year', 'months', 'Location Id'], how='left')
+    airbnb_aggregated = wr.clean_airbnb(df_airbnb)    #May be unnecessary
+    df_rental_cleaned = wr.clean_rental_MERGE(df_rental, df_sa2)
 
     # Gather & respond to user input
     options = ['Summary statistics', 'Price histogram', 'Days since last review histogram',
@@ -109,20 +111,3 @@ def main():
 # Run the main() function
 if __name__ == "__main__":
     main()
-
-
-# ###### Content from old Rental-Bond-Data.py's main() ######    
-#     # Load and pre-process the file(s)
-#     print(df_rental_cleaned.head(n=100))
-
-# ###### Content from old mergeing.py's main() ######
-#     airbnb_data = 'listings_with_area_codes.csv'
-#     rental_data = 'Merged-Data.csv'
-#     # prepare and merge airbnb and rental bond data.
-#     airbnb_df = read_csv_file(airbnb_data)
-#     rental_df = read_csv_file(rental_data)
-#     airbnb_aggregated = clean_airbnb(airbnb_df)
-#     rental_cleaned = clean_rental(rental_df)
-#     merged_df = pd.merge(rental_cleaned, airbnb_aggregated, on=['year', 'months', 'Location Id'], how='left')
-    
-# ###### End of content from older style files ######

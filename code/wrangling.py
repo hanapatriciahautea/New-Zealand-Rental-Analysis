@@ -1,30 +1,15 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import requests
-from multiprocessing import Pool
-from tqdm import tqdm
 import os
 import numpy as np
+import pandas as pd
 
-###### Start of content from old main.py ######
+
 # LOAD FILES  ---------------------------------------------------------------------------------------------------------------------
-def read_csv_file(filename: str):
-    '''Reads the masterfile & converts necessary column data from strings to integers/floats.'''
-    print(".", end="")
-    df = pd.DataFrame()    #Return statement is simpler if there's always *something* to return
-    #Attempt to load; return failed filename for debugging when bulk/batch loading files
-    try:
-        listings = pd.read_csv(filename)
-        df = pd.DataFrame(listings)
-    except:
-        print(f"\n{err_wrap} Error loading file {filename} {err_wrap}\n")
+def read_csv_files(filenames, filepath: str = None):
+    '''Takes in a list of filenames and (optionally) path details, loads the files and returns a single merged dataset.'''
+    # if single filename provided as a string, wrap it in a list
+    if type(filenames) == type("A string"):
+        filenames = [filenames]
 
-    return df 
-
-
-def read_csv_files(filenames: list[str], filepath: str = None):
-    '''Wrapper function for read_csv_file() which takes in a list of filenames and (optionally) path details, returning a single merged dataset.'''
     # Capture publish date (year, month, day) from filename - ditch the non-date parts
     publish_dates = [filename.replace('.csv',"").split('_')[1:] for filename in filenames]
     
@@ -39,7 +24,8 @@ def read_csv_files(filenames: list[str], filepath: str = None):
     # Generate a list of dataframes based on the files
     df_set = []
     for i, filename in enumerate(filenames):
-        df = read_csv_file(filename)
+        raw_data = pd.read_csv(filename)
+        df = pd.DataFrame(raw_data)
         df['year'], df['month'], df['day'] = publish_dates[i]    # Add new columns for publishing year and month; type conversion is handled later
         df['publish_date'] = pd.to_datetime('-'.join(publish_dates[i]), format = "%Y-%m-%d")    # Published date in datetime format
         df_set.append(df)
@@ -50,57 +36,79 @@ def read_csv_files(filenames: list[str], filepath: str = None):
     return merged_df
 
 
+def read_bond_file(filename: str, separator):
+    '''Reads the masterfile & converts necessary column data from strings to integers/floats.'''
+    print(".", end="")
+    if separator == ";":
+        df = pd.DataFrame()
+        dataset = pd.read_csv(filename, sep = ";")
+        df = pd.DataFrame(dataset)
+    else: 
+        df = pd.DataFrame()
+        dataset = pd.read_csv(filename)
+        df = pd.DataFrame(dataset)
+
+    return df 
+
+
 # CLEAN DATA  ---------------------------------------------------------------------------------------------------------------------
+def cleaning_drop_col(df, target_columns):
+    '''Return a copy of the supplied dataframe, with the specified columns removed.'''
+    for col in target_columns:
+        df.drop(columns=[col], inplace=True)
+    print(f" Dropped {len(target_columns)} columns from the dataset: {target_columns}")
+    return df
+
+def cleaning_str_to_date(df, target_columns):
+    '''Convert strings to datetime'''
+    
+    for col in target_columns:
+        df[col] = pd.to_datetime(df[col], format='%Y-%m-%d')    #Dates in the AirBnB 'listings' files look like "2026-03-20" and "2025-12-06"
+    print(f" Converted {len(target_columns)} columns from string to datetime: {target_columns}")
+    return df
+
+def cleaning_int_to_flt(df, target_columns):
+    '''Convert ints to floats'''
+    for col in target_columns:
+        df[col] = df[col].astype(float)
+    print(f" Converted {len(target_columns)} columns from int to float: {target_columns}")
+    return df
+
+def cleaning_str_to_int(df, target_columns):
+    '''Convert strings to ints'''
+    for col in target_columns:
+        df[col] = df[col].astype(int)
+    print(f" Converted {len(target_columns)} columns from string to int: {target_columns}")
+    return df
+
 def do_basic_cleaning(df):
-    '''Return a cleaned dataset after dropping manually specified columns, performing type conversion and adding Month and Year columns. (Wrapper for 'cleaning task')'''
-    actions_taken = []    #Collects details of actions taken, for reporting when complete
-    
-    # Drop targeted columns
-    df, action = cleaning_task(df, 'drop_col', ['license'])
-    actions_taken.append(action)
-    
-    # Convert strings to datetime
-    df, action = cleaning_task(df, 'str_to_date', ['last_review'])
-    actions_taken.append(action)
-
-    # Convert ints to floats
-    df, action = cleaning_task(df, 'int_to_flt', [])    #TODO: Populate this list
-    actions_taken.append(action)
-
-    # Convert strings to ints
-    df, action = cleaning_task(df, 'str_to_int', [])    #TODO: Populate this list
-    actions_taken.append(action)
-    
-    # Report on process and return a cleaned dataset
-    print("Basic data Cleaning:\n" + '\n'.join(actions_taken))
+    '''
+    Wrapper function for airbnb-specific cleaning tasks:
+    Return a cleaned dataset after dropping manually specified columns, performing type conversion and adding Month and Year columns.
+    '''
+    print("Cleaning airbnb dataset:")
+    df = cleaning_drop_col(df, ['license'])
+    df = cleaning_str_to_date(df, ['last_review'])
+    df = cleaning_int_to_flt(df, [])    #TODO: Populate this list
+    df = cleaning_str_to_int(df, [])    #TODO: Populate this list
+    print("Dataset cleaned")
     return df
 
 
-def cleaning_task(df, cleaning_mode = None, target_columns = []):
-    '''Perform a single, pre-defined cleaning task, and return the dataset and a change-log.'''
-    columns_affected = []    #Track which columns actually get altered
-
-    # Make the requested change to the identified columns
-    for col in target_columns:
-        if col in list(df.columns):
-            if cleaning_mode == 'drop_col':
-                df.drop(columns=[col], inplace=True)
-            elif cleaning_mode == 'str_to_date':
-                df[col] = pd.to_datetime(df[col], format='%Y-%m-%d')    #Dates in the AirBnB 'listings' files look like "2026-03-20" and "2025-12-06"
-            elif cleaning_mode == 'int_to_flt':
-                df[col] = df[col].astype(float)
-            elif cleaning_mode == 'str_to_int':
-                df[col] = df[col].astype(int)
-            columns_affected.append(col)  #Update the log
-
-    # Generate report on what happened
-    num_affected = len(columns_affected)
-    if num_affected > 0:
-        change_log = f' - {cleaning_mode} on {num_affected} column{'s' if num_affected > 1 else ""} {columns_affected}'
-    else:
-        change_log = f' - No {cleaning_mode} performed'
-    
-    return df, change_log
+def clean_airbnb(df):
+    # Came from the merge function, so presumably used for that somehow
+    #create month ranges: MM=04 -> JAN-MAR, MM=07 -> APR-JUN, MM=10 -> JUL-SEP, MM=01 -> OCT-DEC
+    df['months'] = df['month'].replace({1: "JAN-MAR", 2: "JAN-MAR", 3: "JAN-MAR", 4: "APR-JUN", 5: "APR-JUN", 6: "APR-JUN", 7: "JUL-SEP", 8: "JUL-SEP", 9: "JUL-SEP", 10: "OCT-DEC", 11: "OCT-DEC", 12: "OCT-DEC"})       
+    df['months-year'] = df['months'].astype(str) + "-" + df['year'].astype(str)
+    #remove all data before Q4 2025 and after Q1 2026 to match rental bond dataset
+    df = df[(df['months-year'] == 'OCT-DEC-2025') | (df['months-year'] == 'JAN-MAR-2026')]
+    #merge by quarters and find mean of price
+    df_merge_areas = df.groupby(['year', 'months', 'area_code'], as_index=False).agg(airbnb_mean_price=('price', 'mean'),total_airbnb_properties=('price', 'count'))
+    df_merge_areas = df_merge_areas.rename(columns={'area_code': 'Location Id'})
+    #Preview the results
+    print(df_merge_areas.head())
+    df_merge_areas.to_csv("airbnb_ready_for_merge.csv", index=False)
+    return df_merge_areas
 
 
 def filter_locations(df):
@@ -133,7 +141,6 @@ def filter_timeframe(df, start_date, end_date):
 def convert_categoricals(df):
     '''Convert string and integer variables into categorical variables; function provides all specifications so will need amending to alter expected behaviours.'''
     columns_affected = {'ordinal':[], 'nominal':[]}
-    
     # The list of variables to be converted, and (ONLY if ordinal) the correct factor order
     conversion_variables = {
         #variableName:[isOrdinal, [Category labels in ascending order]]
@@ -142,7 +149,6 @@ def convert_categoricals(df):
         "neighbourhood_group":[False],
         "neighbourhood":[False]
     }
-
     # Convert the variables, ordering categories where required - check variable values with print(df[varName].unique())
     for var_name, var_details in conversion_variables.items():
         if var_details[0]:
@@ -154,31 +160,10 @@ def convert_categoricals(df):
             # Variable is nominal - can just do basic type conversion
             df[var_name] = df[var_name].astype("category")
             columns_affected['nominal'].append(var_name)
-    
     num_variables = len(conversion_variables.keys())
     print(f'Converted {num_variables} variable{'s' if num_variables > 1 else ""} to ordinal {columns_affected['ordinal']} or nominal {columns_affected['nominal']} categorical type.')
     return df
-###### End of content from old main.py ######
 
-
-
-
-###### End of content from old Rental-Bond-Data.py ######
-# LOAD FILE  ----------------------------------------------------------------------------------------------------------------
-
-def read_csv_file(filename: str, separator):
-    '''Reads the masterfile & converts necessary column data from strings to integers/floats.'''
-    print(".", end="")
-    if separator == ";":
-        df = pd.DataFrame()
-        dataset = pd.read_csv(filename, sep = ";")
-        df = pd.DataFrame(dataset)
-    else: 
-        df = pd.DataFrame()
-        dataset = pd.read_csv(filename)
-        df = pd.DataFrame(dataset)
-
-    return df 
 
 def clean_rental(df, df2):
     '''Cleans rental bond dataset, filters data for only Christchurch City, matched datat to Airbnb dataset'''
@@ -239,43 +224,11 @@ def clean_rental(df, df2):
     df['Dwelling Type'] = df['Dwelling Type'].replace(dwelling_change)
 
     return df
-###### End of content from old Rental-Bond-Data.py ######
 
 
-
-
-###### End of content from old mergeing.py ######
-def read_csv_file(filename: str):
-    '''Reads the masterfile & converts necessary column data from strings to integers/floats.'''
-    print(".", end="")
-    df = pd.DataFrame()
-    dataset = pd.read_csv(filename)
-    df = pd.DataFrame(dataset)
-
-    return df 
-
-def clean_airbnb(df):
-
-    #create month ranges: MM=04 -> JAN-MAR, MM=07 -> APR-JUN, MM=10 -> JUL-SEP, MM=01 -> OCT-DEC
-    df['months'] = df['month'].replace({1: "JAN-MAR", 2: "JAN-MAR", 3: "JAN-MAR", 4: "APR-JUN", 5: "APR-JUN", 6: "APR-JUN", 7: "JUL-SEP", 8: "JUL-SEP", 9: "JUL-SEP", 10: "OCT-DEC", 11: "OCT-DEC", 12: "OCT-DEC"})       
-    df['months-year'] = df['months'].astype(str) + "-" + df['year'].astype(str)
-
-    #remove all data before Q4 2025 and after Q1 2026 to match rental bond dataset
-    df = df[(df['months-year'] == 'OCT-DEC-2025') | (df['months-year'] == 'JAN-MAR-2026')]
-
-    #merge by quarters and find mean of price
-    df_merge_areas = df.groupby(['year', 'months', 'area_code'], as_index=False).agg(airbnb_mean_price=('price', 'mean'),total_airbnb_properties=('price', 'count'))
-    df_merge_areas = df_merge_areas.rename(columns={'area_code': 'Location Id'})
-
-    print(df_merge_areas.head())
-
-    df_merge_areas.to_csv("airbnb_ready_for_merge.csv", index=False)
-
-    return df_merge_areas
-
-def clean_rental(df):
+def clean_rental_MERGE(df):
+    # Drop the rows which aren't Dwelling Type of 'ALL' 
     df = df[(df['Dwelling Type'] == 'ALL') & (df['Number Of Beds'] == 'ALL')]
     df['No_Rental_Properties'] = df['Total Bonds'] + df['Active Bonds'] + df['Closed Bonds']
     df.to_csv("rental_ready_for_merge.csv", index=False)
     return df
-###### End of content from old mergeing.py ######
