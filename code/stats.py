@@ -1,7 +1,7 @@
 #### This file provides statistical summary/descriptive and analysis functions ####
 import pandas as pd
 import numpy as np
-import plots as p
+import plots as pl
 
 
 def summary_stats(df):  # Came from main.py and Rental-Bond-Data.py
@@ -38,20 +38,19 @@ def top_10_reviews(df):
     #display_df.to_csv('top_10_percent_listings.csv', index=False)
 
 
-
-#  TODO: ANSWERS TO DELIVERABLE 5 ------------------------------------------------------------------------------------------------------------------------------
-def get_answers_del_5(df):
+def compare_short_vs_long_term_rentals(df):
     '''
     Produce answers to deliverable 5
     '''
     # Display the median Airbnb price in Christchurch central
-    print("\nWhat's the median AirBnB price in Christchurch Central (Location ID 326600)?\n")
+    print("\nQ: What's the median AirBnB price in Christchurch Central (Location ID 326600)?")
     airbnb_median = df.loc[df['area_code'] == 326600, 'price'].median()
-    print(f'The median Airbnb price in Christchurch Central is {airbnb_median} NZD.')
+    print(f'A: The median Airbnb price in Christchurch Central is {airbnb_median} NZD.')
 
     # Report the largest gap between short and long-term rental prices
-    print("\nIn which part of Christchurch can we observe the craziest (largest) gap between short- and long-term rental prices?\n")
+    print("\nQ: In which part of Christchurch can we observe the craziest (largest) gap between short- and long-term rental prices?")
     df['short_or_long'] = np.where(df['minimum_nights'] >= 28, 'long', 'short')
+    print("A: See the graph that's just been output (somewhere on your screen)")
     summary = pd.pivot_table(
         df, 
         values='price', 
@@ -68,7 +67,7 @@ def get_answers_del_5(df):
     summary['Diff low short - high long'] = abs(summary['lowest price short'] - summary['highest price long'])
     summary = summary.reset_index()
 
-    p.plot_price_diffs(summary) # for the next plotting function
+    pl.plot_price_diffs(summary) # for the next plotting function
 
     # highest average difference between short vs long term rental 
     ward_with_largest_mean_difference = summary.loc[summary["Mean Difference"].idxmax(), 'ward_name']
@@ -91,8 +90,10 @@ def get_answers_del_5(df):
     # comment out below to verify that some wards have no rentals classified as 'long term'
     #print(summary[['ward_name', 'long mean', 'short mean', 'Mean Difference']])
 
-# Sanity Checks ---------------------------------------------------------------------------------------------------------------------------
 
+
+
+# Sanity Checks ---------------------------------------------------------------------------------------------------------------------------
 def sanity_check_summary_stats(df):
     '''
     Confirms df has the expected shape/structure for summary_stats() to run correctly.

@@ -70,43 +70,64 @@ def main():
     df_airbnb = wr.convert_categoricals(df_airbnb)
 
     # Add the location data to the Airbnb data
-    df_airbnb = lo.add_area_codes(df_airbnb, api_key='api_key', layer_id=98970, output_path='listings_with_area_codes.csv')
+    df_airbnb = lo.add_area_codes(df_airbnb, api_key='api_key', layer_id=98970, output_file=os.path.join(output_path,'listings_with_area_codes.csv'))
     df_airbnb = lo.add_ward_codes(df_airbnb)
     
     # Merge the files after some final cleaning/tweaks
-    merged_df = pd.merge(df_rental_cleaned, airbnb_aggregated, on=['year', 'months', 'Location Id'], how='left')
     airbnb_aggregated = wr.clean_airbnb(df_airbnb)    #May be unnecessary
-    df_rental_cleaned = wr.clean_rental_MERGE(df_rental, df_sa2)
+    df_rental_cleaned = wr.clean_rental(df_rental, df_sa2)
+    merged_df = pd.merge(df_rental_cleaned, airbnb_aggregated, on=['year', 'months', 'Location Id'], how='left')
 
     # Gather & respond to user input
-    options = ['Summary statistics', 'Price histogram', 'Days since last review histogram',
-               'Top 10 percent of reviews table', 'Price Extremes', 'Export Files', 'Quit']
+    options = ['Quit', 'Summary statistics', 'Price histogram', 'Days since last review histogram',
+               'Top 10 percent of reviews table', 'Price Extremes', 'Export Files', 'Run Checks']
     run_programme = True
     while run_programme:
         user_input = option_selection(options)
         if user_input == 0:
+            run_programme = False    #Quits the programme gracefully
+            print('\nProgram closed.\n')
+        elif user_input == 1:
             print("== Airbnb Data: ==")
             st.summary_stats(df_airbnb)
             print("== Tenancy Bond Data: ==")
             st.summary_stats(df_rental_cleaned)
-        elif user_input == 1:
-            print("\nGenerating Graph...\n")
-            pl.hist_prices(df_airbnb)
         elif user_input == 2:
             print("\nGenerating Graph...\n")
-            pl.hist_dates(df_airbnb)
+            pl.hist_prices(df_airbnb)
         elif user_input == 3:
-            st.top_10_reviews(df_airbnb)
+            print("\nGenerating Graph...\n")
+            pl.hist_dates(df_airbnb)
         elif user_input == 4:
-            st.compare_short_vs_long_term_rentals(df_airbnb)
+            st.top_10_reviews(df_airbnb)
         elif user_input == 5:
+            st.compare_short_vs_long_term_rentals(df_airbnb)
+        elif user_input == 6:
             export_files({"concatenated_listings":df_airbnb,
                           "Merged-Data":df_rental_cleaned,
                           "airbnb_rental_merged":merged_df})
-        elif user_input == 6:
-            run_programme = False    #Quits the programme gracefully
-            print('\nProgram closed.\n')
-
+        elif user_input == 7:
+            check_options = options[1:-2]    #Trims off the 'quit', and the last options
+            check_options_text = "\n".join(f"{i+1}: {o}" for i, o in enumerate(check_options))
+            user_input_check_type = input(f"\nWhich component should be checked?\n{check_options_text}\n")
+            if user_input_check_type == '1':
+                print(f"Checking {check_options[user_input_check_type - 1]}")
+                st.sanity_check_summary_stats(df)
+            elif user_input_check_type == '2':
+                print(f"Checking {check_options[user_input_check_type - 1]}")
+                pl.sanity_check_hist_prices(df)
+            elif user_input_check_type == '3':
+                print(f"Checking {check_options[user_input_check_type - 1]}")
+                pl.sanity_check_hist_dates(df)
+            elif user_input_check_type == '4':
+                print(f"Checking {check_options[user_input_check_type - 1]}")
+                st.sanity_check_top_10_reviews(df)
+            elif user_input_check_type == '5':
+                print(f"Checking {check_options[user_input_check_type - 1]}")
+                st.sanity_check_compare_short_vs_long_term_rentals(df)
+            else:
+                print("That wasn't a valid check option - if you weren't trying to escape the menu, try again...\n")
+            
 
 # Run the main() function
 if __name__ == "__main__":
