@@ -1,16 +1,10 @@
+#### This file provides data visualisation functions ####
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import requests
-from multiprocessing import Pool
-from tqdm import tqdm
-import os
-import numpy as np
 
-###### End of content from old main.py ######
-# VISUALISATIONS  ----------------------------------------------------------------------------------------------------------------
 
-# Plot 1: Histogram of distribution of prices
+# General Purpose -----------------------------------------------------------------------------------------------------
 def hist_prices(df):
     '''
     Prints a histogram of the distribution of Airbnb listing prices in Christchurch city.
@@ -36,7 +30,6 @@ def hist_prices(df):
     plt.show()
 
 
-# Plot 2: Days since last review (scrape/publish date vs last review date)
 def hist_dates(df):
     '''
     Visualising the distribution of the number of days since the last review.
@@ -75,7 +68,7 @@ def hist_dates(df):
     plt.show()    
 
 
-# From the section regarding deliverable 5
+# Price Differences  -----------------------------------------------------------------------------------------------------
 def plot_price_diffs(summary):
     '''
     Plotting the difference in price per night for short- vs long-term Airbnb rentals per ward.
@@ -90,4 +83,4 @@ def plot_price_diffs(summary):
     plt.ylabel('Ward')
     plt.tight_layout()
     plt.show()
-###### End of content from old main.py ######
+    
