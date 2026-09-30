@@ -90,3 +90,70 @@ def get_answers_del_5(df):
 
     # comment out below to verify that some wards have no rentals classified as 'long term'
     #print(summary[['ward_name', 'long mean', 'short mean', 'Mean Difference']])
+
+# Sanity Checks ---------------------------------------------------------------------------------------------------------------------------
+
+def sanity_check_summary_stats(df):
+    '''
+    Confirms df has the expected shape/structure for summary_stats() to run correctly.
+    '''
+    print("=== Sanity Check: summary_stats ===")
+    assert not df.empty, "FAIL: df is empty"
+    assert 'price' in df.columns, "FAIL: 'price' column missing"
+    print(f"PASS: df has {df.shape[0]} rows and {df.shape[1]} columns")
+
+    fully_null_cols = df.columns[df.isnull().all()].tolist()
+    if fully_null_cols:
+        print(f"WARNING: these columns are entirely null: {fully_null_cols}")
+    else:
+        print("PASS: no columns are entirely null")
+    print()
+
+
+def sanity_check_top_10_reviews(df):
+    '''
+    Confirms the top-10%-by-reviews slice used in top_10_reviews() is being
+    computed correctly - right size, contains the true max, ranks start at 1.
+    '''
+    print("=== Sanity Check: top_10_reviews ===")
+    expected_len = int(len(df) * 0.1)
+    df_sorted = df.sort_values(by='number_of_reviews', ascending=False)
+    top_10_percent = df_sorted.head(expected_len)
+
+    assert len(top_10_percent) == expected_len, "FAIL: top 10% slice length mismatch"
+    print(f"PASS: top 10% slice contains {len(top_10_percent)} rows (expected {expected_len})")
+
+    assert top_10_percent['number_of_reviews'].max() == df['number_of_reviews'].max(), \
+        "FAIL: top row doesn't contain the dataset's overall max number_of_reviews"
+    print("PASS: top row matches the dataset's maximum number_of_reviews")
+
+    ranks = top_10_percent['number_of_reviews'].rank(ascending=False, method='min')
+    assert ranks.min() == 1, "FAIL: minimum rank is not 1 - ranking logic may be broken"
+    print("PASS: rank column starts at 1 as expected")
+    print()
+
+    
+def sanity_check_compare_short_vs_long_term_rentals(df):
+    '''
+    Confirms the inputs compare_short_vs_long_term_rentals() depends on
+    (area_code, ward_name) are present and give plausible values before
+    the full calculation runs.
+    '''
+    print("=== Sanity Check: compare_short_vs_long_term_rentals ===")
+    assert 326600 in df['area_code'].values, "FAIL: location ID 326600 not found in area_code column"
+    median_price = df.loc[df['area_code'] == 326600, 'price'].median()
+    assert pd.notnull(median_price), "FAIL: median price for area 326600 is NaN"
+    assert 0 < median_price < 5000, f"FAIL: median price {median_price} looks implausible"
+    print(f"PASS: median price for area 326600 is {median_price:.2f} NZD (plausible range)")
+
+    assert 'ward_name' in df.columns, "FAIL: 'ward_name' missing - check add_ward_codes() ran before this"
+    n_wards = df['ward_name'].nunique()
+    assert n_wards > 1, "FAIL: only one (or zero) unique wards found"
+    print(f"PASS: {n_wards} unique wards found")
+
+    n_missing_ward = df['ward_name'].isnull().sum()
+    if n_missing_ward > 0:
+        print(f"WARNING: {n_missing_ward} listings have no matching ward")
+    else:
+        print("PASS: every listing has a matching ward")
+    print()
