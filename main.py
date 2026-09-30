@@ -397,7 +397,7 @@ def get_answers_del_5(df):
 
     #mark each row by short or long term rent (short = less than 90 days)
 
-    df['short_or_long'] = np.where(df['minimum_nights'] >= 90, 'long', 'short')
+    df['short_or_long'] = np.where(df['minimum_nights'] >= 28, 'long', 'short')
     
     summary = pd.pivot_table(
         df, 
@@ -406,20 +406,25 @@ def get_answers_del_5(df):
         columns='short_or_long', 
         aggfunc=['min', 'max', 'mean'])
 
-    # Flatten the multi-level columns to match your exact requested names
-    summary.columns = ['lowest price long', 'lowest price short', 
-    'highest price long', 'highest price short', 'long mean', 'short mean']
+    # Flatten the multi-level columns to match the names we want to use
+    summary.columns = ['lowest price long', 'lowest price short', 'highest price long', 'highest price short', 'long mean', 'short mean']
 
-    summary['Mean Difference'] = abs(summary['long mean'] - summary['short mean'])
-    summary['Diff low long - high short'] = abs(summary['lowest price long'] - summary['highest price short'])
+    summary['Mean Difference'] = abs(summary['long mean'] - summary['short mean']) # differences in average price of long- vs short- term stays
+    summary['Diff low long - high short'] = abs(summary['lowest price long'] - summary['highest price short']) 
     summary['Diff low short - high long'] = abs(summary['lowest price short'] - summary['highest price long'])
 
     summary = summary.reset_index()
+    plot_price_diffs(summary) # for the next plotting function
 
+    # highest average difference between short vs long term rental 
     ward_with_largest_mean_difference = summary.loc[summary["Mean Difference"].idxmax(), 'ward_name']
     ward_max_diff = summary.loc[summary['ward_name'] == ward_with_largest_mean_difference,'Mean Difference'].iloc[0]
+
+    # biggest gap between lowest long vs highest short term rental
     ward_with_largest_lowLong_highShort = summary.loc[summary["Diff low long - high short"].idxmax(), 'ward_name']
     ward_max_1 = summary.loc[summary['ward_name'] == ward_with_largest_lowLong_highShort,'Diff low long - high short'].iloc[0]
+
+    # biggest gap between lowest short vs highest long term rental
     ward_with_largest_lowShort_highLong = summary.loc[summary["Diff low short - high long"].idxmax(), 'ward_name']
     ward_max_2 = summary.loc[summary['ward_name'] == ward_with_largest_lowShort_highLong,'Diff low short - high long'].iloc[0]
 
@@ -432,6 +437,24 @@ def get_answers_del_5(df):
     print()
     print('See "airbnb_rental_merged.csv" for details.')
     print()
+
+    # comment out below to verify that some wards have no rentals classified as 'long term'
+    print(summary[['ward_name', 'long mean', 'short mean', 'Mean Difference']])
+
+def plot_price_diffs(summary):
+    '''
+    Plotting the difference in price per night for short- vs long-term Airbnb rentals per ward.
+    '''
+    # sorting in descending order
+    summary_sorted = summary.sort_values('Mean Difference', ascending=False)
+
+    plt.figure(figsize=(10,8))
+    sns.barplot(data=summary_sorted, y='ward_name', x='Mean Difference')
+    plt.title('Average price gap between Short- and Long-term Airbnb rentals per ward')
+    plt.xlabel('Mean Price Difference per Night (NZD)')
+    plt.ylabel('Ward')
+    plt.tight_layout()
+    plt.show()
 
 # MAIN  ----------------------------------------------------------------------------------------------------------------
 
