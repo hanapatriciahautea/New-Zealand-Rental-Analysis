@@ -1,4 +1,5 @@
 import os
+from glob import glob    #Friendly pattern-matching for path and filenames
 import pandas as pd
 import numpy as np
 import wrangling as wr
@@ -14,10 +15,7 @@ end_date   = "2026_04_30"
 base_dir = os.path.dirname(os.path.abspath(__file__))
 input_path  = os.path.join(base_dir, "../input")
 output_path = os.path.join(base_dir, "../output")
-airbnb_data = ["listings_2026_06_19.csv","listings_2026_05_23.csv","listings_2026_04_16.csv", 
-               "listings_2026_03_17.csv", "listings_2026_02_13.csv","listings_2026_01_16.csv", 
-               "listings_2025_12_11.csv","listings_2025_11_07.csv", "listings_2025_10_05.csv"]
-                #filenames should be "listings_YYYY_MM_DD.csv"
+airbnb_data = glob(os.path.join(input_path, "airbnb/listings_*.csv"))    #Find all CSV files in the folder - filenames should be "listings_YYYY_MM_DD.csv"
 rental_data = "Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv"
 sa2_data = "Dwelling_SA2.csv"
 
@@ -109,22 +107,22 @@ def main():
         elif user_input == 7:
             check_options = options[1:-2]    #Trims off the 'quit', and the last options
             check_options_text = "\n".join(f"{i+1}: {o}" for i, o in enumerate(check_options))
-            user_input_check_type = input(f"\nWhich component should be checked?\n{check_options_text}\n")
-            if user_input_check_type == '1':
+            user_input_check_type = int(input(f"\nWhich component should be checked?\n{check_options_text}\n"))
+            if user_input_check_type == 1:
                 print(f"Checking {check_options[user_input_check_type - 1]}")
-                st.sanity_check_summary_stats(df)
-            elif user_input_check_type == '2':
+                st.sanity_check_summary_stats(df_airbnb)
+            elif user_input_check_type == 2:
                 print(f"Checking {check_options[user_input_check_type - 1]}")
-                pl.sanity_check_hist_prices(df)
-            elif user_input_check_type == '3':
+                pl.sanity_check_hist_prices(df_airbnb)
+            elif user_input_check_type == 3:
                 print(f"Checking {check_options[user_input_check_type - 1]}")
-                pl.sanity_check_hist_dates(df)
-            elif user_input_check_type == '4':
+                pl.sanity_check_hist_dates(df_airbnb)
+            elif user_input_check_type == 4:
                 print(f"Checking {check_options[user_input_check_type - 1]}")
-                st.sanity_check_top_10_reviews(df)
-            elif user_input_check_type == '5':
+                st.sanity_check_top_10_reviews(df_airbnb)
+            elif user_input_check_type == 5:
                 print(f"Checking {check_options[user_input_check_type - 1]}")
-                st.sanity_check_compare_short_vs_long_term_rentals(df)
+                st.sanity_check_compare_short_vs_long_term_rentals(df_airbnb)
             else:
                 print("That wasn't a valid check option - if you weren't trying to escape the menu, try again...\n")
             
