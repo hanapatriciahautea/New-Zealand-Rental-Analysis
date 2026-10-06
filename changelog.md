@@ -7,6 +7,10 @@ Updated changelog to reflect recent changes and merges.
 
 Deleted old python files used as references for restructuring project folders
 
+**********************
+**below:** old changes before automated changelog
+**********************
+
 - 2026-09-30
 - Added folders to organise project:
   - `input` for data-files that will be loaded, divided into `airbnb` and `tenancy`;
