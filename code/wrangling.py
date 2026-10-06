@@ -1,5 +1,4 @@
-import os
-import numpy as np
+# Load standard library modules
 import pandas as pd
 
 
@@ -7,7 +6,7 @@ import pandas as pd
 def read_csv_files(filenames, filepath: str = None):
     '''Takes in a list of filenames and (optionally) path details, loads the files and returns a single merged dataset.'''
     # if single filename provided as a string, wrap it in a list
-    if type(filenames) == type("A string"):
+    if type(filenames) == str:
         filenames = [filenames]
 
     # Capture publish date (year, month, day) from filename - ditch the non-date parts
@@ -16,7 +15,7 @@ def read_csv_files(filenames, filepath: str = None):
     # Prefix filenames with path, if supplied
     if filepath != None:
         if filepath[-1] == "\\":
-            filepath == filepath[:-1]  #Remove slash from the end to avoid double-ups
+            filepath = filepath[:-1]  #Remove slash from the end to avoid double-ups
         filepath = filepath.strip()    #Remove trailing whitespace
         filename = [filepath + "\\" + filename for filename in filenames] # Combine the file path & name
     print("\nLoading Files...", end="")

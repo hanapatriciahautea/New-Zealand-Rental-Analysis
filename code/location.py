@@ -1,12 +1,12 @@
 #### This file provides features to load location data from the Koordinates API ####
-
+from multiprocessing import Pool
 import os
 import pandas as pd
 import requests
-from multiprocessing import Pool
+
 from tqdm import tqdm
 
-# Housekeeping
+# File management parameters
 base_dir = os.path.dirname(os.path.abspath(__file__))
 input_path  = os.path.join(base_dir, "../input")
 output_path = os.path.join(base_dir, "../output")

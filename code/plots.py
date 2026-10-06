@@ -1,6 +1,6 @@
 #### This file provides data visualisation functions ####
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 
@@ -13,7 +13,7 @@ def hist_prices(df):
     threshold = df['price'].quantile(0.99)
     df_filtered = df[df['price'] < threshold]
 
-    fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+    _fig, axs = plt.subplots(2, 1, figsize=(10, 10))
     
     sns.histplot(df_filtered['price'], bins = 30, kde = True, ax = axs[0])
     axs[0].set_title('Distribution of Price (excluding outliers - 99th percentile cutoff)')
@@ -40,7 +40,7 @@ def hist_dates(df):
     df['days_since_last_review'] = df['publish_date'] - df['last_review']
     df['days_since_last_review'] = (df['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
 
-    fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+    _fig, axs = plt.subplots(2, 1, figsize=(10, 10))
 
     # Filtering out negative date differences that occur after the publish date
     df_no_negatives = df[df['days_since_last_review'] >= 0]
