@@ -1,4 +1,7 @@
 # Changelog
+## 2026 October 8th
+- 
+
 ## 2026 September 30th
 - Added folders to organise project:
   - `input` for data-files that will be loaded, divided into `airbnb` and `tenancy`;
