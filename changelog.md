@@ -1,4 +1,7 @@
 # Changelog
+- 2026-10-06 (hanapatriciahautea): Revise changelog for project restructuring updates
+
+Updated changelog to reflect recent changes and merges.
 - 2026-10-06 (hanapatriciahautea): Modify changelog update process in workflow
 - 2026-10-06 (hanapatriciahautea): Merge pull request #28 from hanapatriciahautea/Hana's-branch
 
