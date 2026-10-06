@@ -1,4 +1,8 @@
 # Changelog
+### 2026-10-06
+- (hanapatriciahautea): Enhance changelog workflow through formatting changes
+  Added Python setup to changelog automated workflow and used a Python script for better formatting to group by date.
+
 - 2026-10-06 (julianefelder): Revise changelog with recent updates
 
 Updated changelog to include recent project restructuring changes.
