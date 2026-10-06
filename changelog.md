@@ -16,3 +16,6 @@
 - Added `import` statmements to `main.py` to load the new code files, and updated function calls to reference the relevant code file.
 - Updated file I/O commands to include the relevant filepath info, to support the new subfolder-based approach.
 - Adjusted behaviour so the programme only outputs csv files if the user explicitly selects it from the UI menu. Otherwise it manages the data internally within the session.
+- 2026-10-06 (hanapatriciahautea): Merge pull request #28 from hanapatriciahautea/Hana's-branch
+
+Deleted old python files used as references for restructuring project folders
