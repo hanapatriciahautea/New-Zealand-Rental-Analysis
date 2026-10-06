@@ -2,11 +2,13 @@
 This group project is a part of the *Data Wrangling* `DATA422` course at the University of Canterbury. This course provides an introduction to Data Wrangling, also called Data Engineering, a critical
 component of any Data Science project. [See Course Information](https://courseinfo.canterbury.ac.nz/GetCourseDetails.aspx?course=DATA422)
 
-The data comes from  *insideairbnb.com* - a mission driven project that provides data and advocacy about Airbnb's impact on residential communities ([Cox, n.d.](#cox-nd)).
+The data used for this project has been retrieved from  *insideairbnb.com* - a mission driven project that provides data and advocacy about Airbnb's impact on residential communities ([Cox, n.d.](#cox-nd)) -, The Ministry of Business, Innovation and Employment ([2026](#MBIE-2026)]) of New Zealand, NZ Stats ([2019](#StatsNZ-2019)), and the Christchurch City Council ([n.d.](#CCC-nd)).
 
 ## The Datasets
 ### 1. AirBnB
-The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026](#cox-2026)).
+The Insideairbnb's New Zealand-specific dataset published between October 2025 and August 2026 ([Cox, 2026](#cox-2026)) have been analysed.
+
+New data files can be added, as long as the file name follows the structure: listings_YYYY_MM_DD.csv
 
 **Data Dictionary** [Cox (2022)](#cox-2022)  
 | Field Name | Data Type | Description |
@@ -39,6 +41,7 @@ The New Zealand-specific dataset was published on the 19 June, 2026 ([Cox, 2026]
 
 Each function in the pipeline is configured to print (to the console) a summary of what it did and how many columns or rows were affected, or to clarify that no change was made. The row filtering step reports the number of rows 'dropped', alongside the initial and final row counts.
 
+For further analysis, geographical data was downloaded from Stats NZ using an API key of Koordinates ([Koordinates, n.d.](#koord-nd)).
 
 ### 2. Rental bond data
 The rental bond dataset was published by the The Ministry of Business, Innovation and Employment and made available on their Tenancy Services website. The data has been last updated on 10th September 2026 and it has been retrieve for this project on 10th September 2026. Specifically, the "Detailed quarterly report, January 2020 to April 2026" is used here ([The Ministry of Business, Innovation and Employment, 2026](#MBIE-2026)).
@@ -79,6 +82,8 @@ The Rental Bond dataset has been cleaned to match the Airbnb dataset.
 7. Renamed columns to match Airbnb data
 8. Matched and renamed dwelling types to Airbnb room types
 
+## Project structure
+The project structure of code, input and output file is explained in the ([changelog](https://github.com/hanapatriciahautea/New-Zealand-Rental-Analysis/blob/main/changelog.md)).
 
 ## License
 The Airbnb raw data is made available under a Creative Commons license by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
@@ -93,6 +98,8 @@ The rental bond raw data is made available under a Creative Commons license by T
 <a id="cox-2026"></a>Cox, M. (2026, June 19). *listings.csv*. Retrieved July 30, 2026, from [https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv](https://data.insideairbnb.com/new-zealand/2026-06-19/visualisations/listings.csv)  
 
 <a id="cox-2022"></a>Cox, M. (2022, August). *Inside Airbnb Data Dictionary.xlsx*. Retrieved July 30, 2026, from [https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596](https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1322284596#gid=1322284596)  
+
+<a id="koord-nd"></a>Koordindates (n.d.). *Koordinates Public Data Catalog*. Retrieved September 22, 2026, from [https://koordinates.com/](https://koordinates.com/)
 
 <a id="MBIE-2026"></a>The Ministry of Business, Innovation and Employment. (2026, September 10). *Rental bond data*. Retrieved September 10, 2026, from [https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/](https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/)
 
