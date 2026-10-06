@@ -1,4 +1,7 @@
 # Changelog
+- 2026-10-06 (julianefelder): Revise changelog with recent updates
+
+Updated changelog to include recent project restructuring changes.
 - 2026-10-06 (hanapatriciahautea): Revise changelog for project restructuring updates
 
 Updated changelog to reflect recent changes and merges.
