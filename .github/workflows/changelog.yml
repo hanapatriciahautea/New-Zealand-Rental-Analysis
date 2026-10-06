@@ -7,18 +7,24 @@ on:
 jobs:
   update-changelog:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Append commit to changelog
+      - name: Prepend commit to changelog
         run: |
           DATE=$(date +"%Y-%m-%d")
           MSG=$(git log -1 --pretty=%B)
           AUTHOR=$(git log -1 --pretty=%an)
-          echo "- $DATE ($AUTHOR): $MSG" >> changelog.md
+          head -n 1 changelog.md > /tmp/title.txt
+          tail -n +2 changelog.md > /tmp/rest.txt
+          echo "- $DATE ($AUTHOR): $MSG" > /tmp/new_entry.txt
+          cat /tmp/title.txt /tmp/new_entry.txt /tmp/rest.txt > /tmp/changelog_combined.md
+          mv /tmp/changelog_combined.md changelog.md
 
       - name: Commit and push changelog
         run: |
