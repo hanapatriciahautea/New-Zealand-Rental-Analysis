@@ -1,0 +1,29 @@
+name: Update Changelog
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Append commit to changelog
+        run: |
+          DATE=$(date +"%Y-%m-%d")
+          MSG=$(git log -1 --pretty=%B)
+          AUTHOR=$(git log -1 --pretty=%an)
+          echo "- $DATE ($AUTHOR): $MSG" >> changelog.md
+
+      - name: Commit and push changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add changelog.md
+          git commit -m "Update changelog [skip ci]" || echo "No changes to commit"
+          git push
