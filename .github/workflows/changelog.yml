@@ -15,16 +15,48 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Prepend commit to changelog
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Prepend commit to changelog, grouped by date
         run: |
-          DATE=$(date +"%Y-%m-%d")
-          MSG=$(git log -1 --pretty=%B)
-          AUTHOR=$(git log -1 --pretty=%an)
-          head -n 1 changelog.md > /tmp/title.txt
-          tail -n +2 changelog.md > /tmp/rest.txt
-          echo "- $DATE ($AUTHOR): $MSG" > /tmp/new_entry.txt
-          cat /tmp/title.txt /tmp/new_entry.txt /tmp/rest.txt > /tmp/changelog_combined.md
-          mv /tmp/changelog_combined.md changelog.md
+          python3 << 'EOF'
+          import subprocess
+          from datetime import date
+
+          def git_log(fmt):
+              return subprocess.check_output(['git', 'log', '-1', f'--pretty={fmt}']).decode().strip()
+
+          today = date.today().isoformat()
+          author = git_log('%an')
+          subject = git_log('%s')
+          body = git_log('%b')
+
+          with open('changelog.md') as f:
+              lines = f.readlines()
+
+          title = lines[0]
+          rest = lines[1:]
+
+          # Build this commit's entry
+          entry_lines = [f"- ({author}): {subject}\n"]
+          if body.strip():
+              entry_lines.append(f"  {body.strip()}\n")
+
+          date_header = f"### {today}\n"
+
+          if rest and rest[0].strip() == date_header.strip():
+              # Today's header already exists - insert entry right after it
+              new_content = [title, date_header] + entry_lines + rest[1:]
+          else:
+              # New date - add a fresh header
+              new_content = [title, date_header] + entry_lines + ["\n"] + rest
+
+          with open('changelog.md', 'w') as f:
+              f.writelines(new_content)
+          EOF
 
       - name: Commit and push changelog
         run: |
