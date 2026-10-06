@@ -1,4 +1,5 @@
 # Changelog
+- 2026-10-06 (hanapatriciahautea): Modify changelog update process in workflow
 ## 2026 October 8th
 - 
 
