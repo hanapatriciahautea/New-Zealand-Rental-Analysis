@@ -1,4 +1,8 @@
 # Changelog
+### 2026-10-07
+- (hanapatriciahautea): Merge pull request #29 from hanapatriciahautea/Hana's-branch
+  Added os.path.basename to whenever we need the file names to load CSVs in the code/wrangling file
+
 ### 2026-10-06
 - (hanapatriciahautea): Enhance changelog workflow through formatting changes
   Added Python setup to changelog automated workflow and used a Python script for better formatting to group by date.
