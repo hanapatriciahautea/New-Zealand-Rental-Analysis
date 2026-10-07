@@ -3,6 +3,7 @@ from multiprocessing import Pool
 import os
 import pandas as pd
 import requests
+import time
 
 from tqdm import tqdm
 
@@ -13,7 +14,7 @@ output_path = os.path.join(base_dir, "../output")
 
 
 ## GETTING AREA CODES VIA API KEY ------------------------------------------------------------------------------------------------
-def get_area_code(lat, lon, api_key, layer_id):
+def get_area_code(lat, lon, api_key, layer_id, retries=3):
     '''
     Queries the Koordinates API for a single latitude/longitude pair and returns the matching area code.
     '''
@@ -27,17 +28,25 @@ def get_area_code(lat, lon, api_key, layer_id):
         "radius": 1000,
         "with_field_names": "true"
     }
-    try:
-        response = requests.get(url, params = params)
-        response.raise_for_status()
-        data = response.json()
-        features = data['vectorQuery']['layers'][str(layer_id)]['features']
-        if not features:
-            return None # if no match is found within the radius
-        return features[0]['properties']['SA22019_V1_00'] # extract the area code field
-    except Exception as e:
-        print(f"Error for lat={lat}, lon={lon}: {e}")
-        return None
+    # retry with backoff approach below
+    for attempt in range(retries): # wrapping try/except in a for loop because it initially hit the rate limit, so this keeps retrying a specified number of times
+        try:
+            response = requests.get(url, params=params)
+            if response.status_code == 429:
+                wait = 5 * (attempt + 1)
+                time.sleep(wait)
+                continue
+            response.raise_for_status()
+            data = response.json()
+            features = data['vectorQuery']['layers'][str(layer_id)]['features']
+            if not features:
+                return None # if no match is found within the radius
+            return features[0]['properties']['SA22019_V1_00'] # extract the area code field
+        except Exception as e:
+            print(f"Error for lat={lat}, lon={lon}: {e}")
+            return None
+    print(f"Gave up after {retries} retries for lat={lat}, lon={lon} (rate limited)")
+    return None
 
 
 def query_wrapper(args):
@@ -51,26 +60,48 @@ def add_area_codes(df, api_key, layer_id, output_file=os.path.join(output_path, 
     '''
     Adds a column for area code to the dataframe from querying a Koordinates API for each Airbnb listing's latitude and longitude
     using multiprocessing & saves the result to a CSV file.
+    If rerunning, existing rows already in the cached output file are left as is while only new or previously failed (NaN) rows are queried.
     '''
     # adding a safeguard to prevent re-running the API call
     if os.path.exists(output_file):
-        return pd.read_csv(output_file)
-    
+        cached = pd.read_csv(output_file)
+        cached['area_code'] = pd.to_numeric(cached['area_code'], errors='coerce') # the 'coerce' part is a safety net that converts invalid data to NaN instead of crashing the program
+
+        # rows with a successful cached result - this won't be requeried
+        successfully_cached_ids = cached.loc[cached['area_code'].notnull(), 'id'] 
+
+        # new rows from newly added files or previously failed rows (NaN) that are not yet cached
+        rows_to_query = df[~df['id'].isin(successfully_cached_ids)].copy()
+
+        if rows_to_query.empty:
+            print("No new or missing rows to query - using cached results.")
+            return cached
+
+        # if new/missing rows have been identified, the API query will rerun
+        print(f"Found {len(rows_to_query)} new/missing rows. Running API queries...")   
     else:
+        rows_to_query = df.copy()
+        cached = None
         print(f"No existing file has been found. Running API queries for {len(df)} rows...")
 
-        # build list of arguments for each row
-        tasks = [(row['latitude'], row['longitude'], api_key, layer_id) for _, row in df.iterrows()]
+    # build list of arguments for each row
+    tasks = [(row['latitude'], row['longitude'], api_key, layer_id) for _, row in rows_to_query.iterrows()]
 
-        results = []
-        with Pool(processes=5) as pool:
-            for result in tqdm(pool.imap(query_wrapper, tasks), total=len(tasks)):
-                results.append(result)
+    results = []
+    with Pool(processes=3) as pool: # processes=n indicates using n number of machines (parallel computing)
+        for result in tqdm(pool.imap(query_wrapper, tasks), total=len(tasks)):
+            results.append(result)
+    rows_to_query['area_code'] = results
 
-        df['area_code'] = results
-        df.to_csv(output_file, index=False)
-        print(f"The results have been saved to {output_file}.")
-        return df
+    if cached is not None:
+        # drop the old (stale/failed) versions of these ids from the cache, then add fresh results back in
+        updated = pd.concat([cached[~cached['id'].isin(rows_to_query['id'])], rows_to_query], ignore_index=True)
+    else:
+        updated = rows_to_query
+
+    updated.to_csv(output_file, index=False)
+    print(f"The results have been saved to {output_file}.")
+    return updated
 
 
 ##  ADDING WARD CODES ------------------------------------------------------------------------------------------------------------------------------
@@ -84,6 +115,9 @@ def add_ward_codes(df, ward_concordance_file=os.path.join(input_path, 'airbnb/me
     # adding a safeguard to prevent re-merging 
     if 'ward_code' in df.columns:
         return df
+
+    # ensuring area_code is numeric so it won't mess up the merge below
+    df['area_code'] = pd.to_numeric(df['area_code'], errors='coerce') 
 
     mb_to_ward = pd.read_excel(ward_concordance_file, skiprows=9)
     mb_to_sa2 = pd.read_excel(sa2_concordance_file, skiprows=9)
