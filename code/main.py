@@ -27,7 +27,6 @@ def option_selection(options):
     '''
     prompt = 'Please select an option: '
     i = 0
-    print()    #Insert a blank line above the options, for readability
     while i < len(options):
         print(f'{i} {options[i]}')
         i += 1
@@ -45,8 +44,8 @@ def export_files(files_and_df:dict, filepath:str=output_path):
     Output the datasets to CSV files in the designated output folder, omitting the index column.
     'files_and_df' expects a dict of filename:dataset (excluding file extensions).
     '''
-    for export_data, export_filename in files_and_df.items:
-        export_data.to_csv(os.path.join(filepath, export_filename, ".csv"), index=False)
+    for export_filename, export_data in files_and_df.items():
+        export_data.to_csv(os.path.join(filepath, export_filename + ".csv"), index=False)
 
     print (f"{len(files_and_df)} files output to {os.path.abspath(output_path)}")
 
@@ -81,6 +80,7 @@ def main():
                'Top 10 percent of reviews table', 'Price Extremes', 'Export Files', 'Run Checks']
     run_programme = True
     while run_programme:
+        print()    #Insert a blank line above the options, for readability
         user_input = option_selection(options)
         if user_input == 0:
             run_programme = False    #Quits the programme gracefully
@@ -105,10 +105,14 @@ def main():
                           "Merged-Data":df_rental_cleaned,
                           "airbnb_rental_merged":merged_df})
         elif user_input == 7:
-            check_options = options[1:-2]    #Trims off the 'quit', and the last options
+            check_options = ["Go back"] + options[1:-2]    #Trims off the 'quit', and the last options
             check_options_text = "\n".join(f"{i+1}: {o}" for i, o in enumerate(check_options))
-            user_input_check_type = int(input(f"\nWhich component should be checked?\n{check_options_text}\n"))
-            if user_input_check_type == 1:
+            print("\033[1m" + "\nWhich component should be checked?" + "\033[0m")
+            user_input_check_type = option_selection(check_options)
+            if user_input_check_type == 0:
+                print("Going back...")
+                continue    #Loop back around
+            elif user_input_check_type == 1:
                 print(f"Checking {check_options[user_input_check_type - 1]}")
                 st.sanity_check_summary_stats(df_airbnb)
             elif user_input_check_type == 2:
