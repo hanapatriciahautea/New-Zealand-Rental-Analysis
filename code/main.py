@@ -110,6 +110,10 @@ def main():
     # Add the location data to the Airbnb data
     df_airbnb = lo.add_area_codes(df_airbnb, api_key=api_key, layer_id=98970, output_file=os.path.join(output_path,'listings_with_area_codes.csv'))
     df_airbnb = lo.add_ward_codes(df_airbnb)
+
+    # Normalize dates here -- add_area_codes() may have reloaded cached data from CSV, which strips datetime back to plain strings
+    df_airbnb['last_review'] = pd.to_datetime(df_airbnb['last_review'], format='mixed')
+    df_airbnb['publish_date'] = pd.to_datetime(df_airbnb['publish_date'], format='mixed')
     
     # Merge the files after some final cleaning/tweaks
     airbnb_aggregated = wr.clean_airbnb(df_airbnb)    #May be unnecessary
