@@ -1,5 +1,5 @@
 # New-Zealand-Rental-Analysis
-This group project is a part of the *Data Wrangling* `DATA422` course at the University of Canterbury. This course provides an introduction to Data Wrangling, also called Data Engineering, a critical
+This group project is a part of the *Data Wrangling* (DATA422) course at the University of Canterbury. This course provides an introduction to Data Wrangling, also called Data Engineering, a critical
 component of any Data Science project. [See Course Information](https://courseinfo.canterbury.ac.nz/GetCourseDetails.aspx?course=DATA422)
 
 The data used for this project has been retrieved from  *insideairbnb.com* - a mission driven project that provides data and advocacy about Airbnb's impact on residential communities ([Cox, n.d.](#cox-nd)) -, The Ministry of Business, Innovation and Employment ([2026](#MBIE-2026)]) of New Zealand, NZ Stats ([2019](#StatsNZ-2019)), and the Christchurch City Council ([n.d.](#CCC-nd)).
@@ -8,7 +8,7 @@ The data used for this project has been retrieved from  *insideairbnb.com* - a m
 ### 1. AirBnB
 The Insideairbnb's New Zealand-specific dataset published between October 2025 and August 2026 ([Cox, 2026](#cox-2026)) have been analysed.
 
-New data files can be added, as long as the file name follows the structure: listings_YYYY_MM_DD.csv
+New data files can be added, as long as the file name follows the structure: `listings_YYYY_MM_DD.csv`
 
 **Data Dictionary** [Cox (2022)](#cox-2022)  
 | Field Name | Data Type | Description |
@@ -83,7 +83,7 @@ The Rental Bond dataset has been cleaned to match the Airbnb dataset.
 8. Matched and renamed dwelling types to Airbnb room types
 
 ## Project structure
-The project structure of code, input and output file is explained in the ([changelog](https://github.com/hanapatriciahautea/New-Zealand-Rental-Analysis/blob/main/changelog.md)).
+The project structure of code, input and output file is explained in the [changelog](https://github.com/hanapatriciahautea/New-Zealand-Rental-Analysis/blob/main/changelog.md).
 
 ## License
 The Airbnb raw data is made available under a Creative Commons license by InsideAirbnb: [https://creativecommons.org/publicdomain/zero/1.0/](https://creativecommons.org/publicdomain/zero/1.0/).
