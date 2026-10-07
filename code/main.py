@@ -45,8 +45,8 @@ def export_files(files_and_df:dict, filepath:str=output_path):
     Output the datasets to CSV files in the designated output folder, omitting the index column.
     'files_and_df' expects a dict of filename:dataset (excluding file extensions).
     '''
-    for export_data, export_filename in files_and_df.items:
-        export_data.to_csv(os.path.join(filepath, export_filename, ".csv"), index=False)
+    for export_filename, export_data in files_and_df.items():
+        export_data.to_csv(os.path.join(filepath, export_filename + ".csv"), index=False)
 
     print (f"{len(files_and_df)} files output to {os.path.abspath(output_path)}")
 
