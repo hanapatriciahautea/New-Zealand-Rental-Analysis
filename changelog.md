@@ -1,5 +1,10 @@
 # Changelog
 ### 2026-10-07
+- (Chris): Merge pull request #30 from hanapatriciahautea/chris's-branch -
+  PR for fix to plotting sanity check, and a minor code tidy:
+- Sorted import blocks and removed unused import statements.
+- Removed/muted unused variables (namely 'fig').
+- Fixed issue with sanity checks for plotting functions, by dropping NA prices before checking for negative values.
 - (hanapatriciahautea): Merge pull request #29 from hanapatriciahautea/Hana's-branch
   Added os.path.basename to whenever we need the file names to load CSVs in the code/wrangling file
 
