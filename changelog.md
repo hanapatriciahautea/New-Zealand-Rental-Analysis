@@ -1,5 +1,7 @@
 # Changelog
 ### 2026-10-07
+- (Chris): Minor formatting update in README.md
+  Small number of minor tweaks.
 - (Chris): Merge pull request #31 from hanapatriciahautea/chris-branch
   Fixed issue with data export, and wrangling file; and adjusted "checks" submenu for consistency & better readability:
 - Fixed error in data export function, and added 'os' import statement back into wrangling.py
