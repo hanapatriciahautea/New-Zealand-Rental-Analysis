@@ -1,12 +1,13 @@
-import os
+# Load standard library modules
 from glob import glob    #Friendly pattern-matching for path and filenames
+import os
 import pandas as pd
-import numpy as np
-import wrangling as wr
-import stats as st
-import plots as pl
-import location as lo
 
+# Load custom libraries
+import location as lo
+import plots as pl
+import stats as st
+import wrangling as wr
 
 start_date = "2020_01_01"
 end_date   = "2026_04_30"
@@ -48,7 +49,6 @@ def export_files(files_and_df:dict, filepath:str=output_path):
         export_data.to_csv(os.path.join(filepath, export_filename, ".csv"), index=False)
 
     print (f"{len(files_and_df)} files output to {os.path.abspath(output_path)}")
-    return None
 
 
 # Main Programme ------------------------------------------------------------------------

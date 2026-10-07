@@ -1,6 +1,6 @@
 #### This file provides statistical summary/descriptive and analysis functions ####
-import pandas as pd
 import numpy as np
+import pandas as pd
 import plots as pl
 
 
