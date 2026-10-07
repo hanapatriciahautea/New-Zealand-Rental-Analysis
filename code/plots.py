@@ -93,7 +93,8 @@ def sanity_check_hist_prices(df):
     '''
     print("=== Sanity Check: hist_prices ===")
     assert 'price' in df.columns, "FAIL: 'price' column missing"
-    assert (df['price'] >= 0).all(), "FAIL: negative prices found - price column may be corrupted"
+    #assert (df['price'] >= 0).all(), "FAIL: negative prices found - price column may be corrupted"
+    assert (df['price'].dropna() >= 0).all(), "FAIL: negative prices found - price column may be corrupted"
 
     threshold = df['price'].quantile(0.99)
     df_filtered = df[df['price'] < threshold]
