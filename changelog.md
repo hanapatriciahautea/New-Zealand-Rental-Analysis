@@ -1,5 +1,10 @@
 # Changelog
 ### 2026-10-07
+- (Chris): Merge pull request #31 from hanapatriciahautea/chris-branch
+  Fixed issue with data export, and wrangling file; and adjusted "checks" submenu for consistency & better readability:
+- Fixed error in data export function, and added 'os' import statement back into wrangling.py
+- Adjusted "checks" submenu so that it uses the existing option_selection() function.
+- Adjusted the "checks" submenu so there's an option to go-back to the main menu, which is consistent with the 'quit' option of the root menu.
 - (Chris): Merge pull request #30 from hanapatriciahautea/chris's-branch -
   PR for fix to plotting sanity check, and a minor code tidy:
 - Sorted import blocks and removed unused import statements.
