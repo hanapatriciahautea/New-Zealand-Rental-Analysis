@@ -1,4 +1,26 @@
 # Changelog
+### 2026-10-08
+- (Hana Patricia Hautea): Automated the pipeline with a Makefile & fixed area-code cache problems and date-parsing bugs.
+  - Added Makefile ('make run') so the full pipeline (load, clean, geocode, merge, analyse, export) runs through one command.
+- Reworked add_area_codes() to only query the Koordinates API for rows missing a cached area_code instead of the whole dataset.
+- Added 'retry with backoff' code to get_area_code() to handle Koordinates rate limiting (HTTP 429) gracefully instead of crashing.
+- Used errors='coerce' to fix a data type mismatch (str vs int64) in add_ward_codes()'s merge code caused by some row's missing (NaN) values.
+- Removed redundant pd.to_datetime() re-conversions in hist_dates() under plots.py (specifically
+last_review and publish_date were already in datetime formats upstream).
+- Added section headers to run_batch() output for readability.
+- Tweaked the changelog.yaml file to capture all commits in a push, not just the latest.
+- (Hana Patricia Hautea): Fixed a small bug by normalizing date fields in Airbnb data after adding area and ward codes (in main() of main.py)
+- (hanapatriciahautea): Merge pull request #32 from hanapatriciahautea/Hana's-branch
+  Added Makefile ('make run') so the full pipeline (load, clean, geocode, merge, analyse, export) runs through one command.
+Reworked add_area_codes() to only query the Koordinates API for rows missing a cached area_code instead of the whole dataset.
+Added 'retry with backoff' code to get_area_code() to handle Koordinates rate limiting (HTTP 429) gracefully instead of crashing.
+Used errors='coerce' to fix a data type mismatch (str vs int64) in add_ward_codes()'s merge code caused by some row's missing (NaN) values.
+Removed redundant pd.to_datetime() re-conversions in hist_dates() under plots.py (specifically
+last_review and publish_date were already in datetime formats upstream).
+Added section headers to run_batch() output for readability.
+Tweaked the changelog.yaml file to capture all commits in a push, not just the latest.
+Fixed a small bug by normalizing date fields in Airbnb data after adding area and ward codes (in main() of main.py).
+
 ### 2026-10-07
 - (Chris): Minor formatting update in README.md
   Small number of minor tweaks.
