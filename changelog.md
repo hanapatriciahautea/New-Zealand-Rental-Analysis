@@ -1,5 +1,7 @@
 # Changelog
 ### 2026-10-08
+- (hanapatriciahautea): Revised changelog for improved formatting and clarity
+  Small formatting updates and removal of a redundant entry
 - (Hana Patricia Hautea): Automated the pipeline with a Makefile & fixed area-code cache problems and date-parsing bugs.
   - Added Makefile ('make run') so the full pipeline (load, clean, geocode, merge, analyse, export) runs through one command.
 - Reworked add_area_codes() to only query the Koordinates API for rows missing a cached area_code instead of the whole dataset.
