@@ -13,46 +13,60 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Prepend commit to changelog, grouped by date
+      - name: Prepend commits to changelog, grouped by date
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
         run: |
           python3 << 'EOF'
           import subprocess
+          import os
           from datetime import date
 
-          def git_log(fmt):
-              return subprocess.check_output(['git', 'log', '-1', f'--pretty={fmt}']).decode().strip()
+          before = os.environ['BEFORE_SHA']
+          after = os.environ['AFTER_SHA']
+
+          if before == '0000000000000000000000000000000000000000':
+              commit_shas = subprocess.check_output(
+                  ['git', 'log', '-1', '--pretty=%H']
+              ).decode().strip().splitlines()
+          else:
+              commit_shas = subprocess.check_output(
+                  ['git', 'log', f'{before}..{after}', '--pretty=%H']
+              ).decode().strip().splitlines()
 
           today = date.today().isoformat()
-          author = git_log('%an')
-          subject = git_log('%s')
-          body = git_log('%b')
 
           with open('changelog.md') as f:
               lines = f.readlines()
-
           title = lines[0]
           rest = lines[1:]
 
-          # Build this commit's entry
-          entry_lines = [f"- ({author}): {subject}\n"]
-          if body.strip():
-              entry_lines.append(f"  {body.strip()}\n")
+          all_new_entries = []
+          for sha in reversed(commit_shas):
+              if not sha:
+                  continue
+              author = subprocess.check_output(['git', 'show', '-s', '--pretty=%an', sha]).decode().strip()
+              subject = subprocess.check_output(['git', 'show', '-s', '--pretty=%s', sha]).decode().strip()
+              body = subprocess.check_output(['git', 'show', '-s', '--pretty=%b', sha]).decode().strip()
+
+              all_new_entries.append(f"- ({author}): {subject}\n")
+              if body:
+                  all_new_entries.append(f"  {body}\n")
 
           date_header = f"### {today}\n"
 
           if rest and rest[0].strip() == date_header.strip():
-              # Today's header already exists - insert entry right after it
-              new_content = [title, date_header] + entry_lines + rest[1:]
+              new_content = [title, date_header] + all_new_entries + rest[1:]
           else:
-              # New date - add a fresh header
-              new_content = [title, date_header] + entry_lines + ["\n"] + rest
+              new_content = [title, date_header] + all_new_entries + ["\n"] + rest
 
           with open('changelog.md', 'w') as f:
               f.writelines(new_content)

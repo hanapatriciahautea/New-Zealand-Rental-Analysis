@@ -2,10 +2,11 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import os
 
 
 # General Purpose -----------------------------------------------------------------------------------------------------
-def hist_prices(df):
+def hist_prices(df, output_path=None):
     '''
     Prints a histogram of the distribution of Airbnb listing prices in Christchurch city.
     '''
@@ -27,16 +28,18 @@ def hist_prices(df):
     axs[1].set_ylabel('Count (# of listings)')
 
     plt.tight_layout()  # prevents titles/labels from overlapping between subplots
-    plt.show()
 
+    # for automated pipeline in makefile
+    if output_path:
+        plt.savefig(os.path.join(output_path, 'hist_prices.png'))
+        plt.close()
+    else:
+        plt.show()
 
-def hist_dates(df):
+def hist_dates(df, output_path=None):
     '''
     Visualising the distribution of the number of days since the last review.
     '''
-    df['last_review'] = pd.to_datetime(df['last_review'])
-    df['publish_date'] = pd.to_datetime(df['publish_date'])
-
     df['days_since_last_review'] = df['publish_date'] - df['last_review']
     df['days_since_last_review'] = (df['days_since_last_review'].dt.total_seconds() / (24 * 60 * 60))
 
@@ -65,7 +68,13 @@ def hist_dates(df):
     axs[1].set_ylabel('Count (# of listings)')
 
     plt.tight_layout()  # prevents titles/labels from overlapping between subplots
-    plt.show()    
+    
+    # for automated pipeline in makefile
+    if output_path:
+        plt.savefig(os.path.join(output_path, 'plot_price_diffs.png'))
+        plt.close()
+    else:
+        plt.show()
 
 
 # Price Differences  -----------------------------------------------------------------------------------------------------
