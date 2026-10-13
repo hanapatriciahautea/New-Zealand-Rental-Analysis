@@ -116,7 +116,7 @@ def main():
     df_airbnb['publish_date'] = pd.to_datetime(df_airbnb['publish_date'], format='mixed')
     
     # Merge the files after some final cleaning/tweaks
-    airbnb_aggregated = wr.clean_airbnb(df_airbnb)    #May be unnecessary
+    airbnb_aggregated = wr.clean_airbnb(df_airbnb, output_path)    #May be unnecessary
     df_rental_cleaned = wr.clean_rental(df_rental, df_sa2)
     merged_df = pd.merge(df_rental_cleaned, airbnb_aggregated, on=['year', 'months', 'Location Id'], how='left')
 
