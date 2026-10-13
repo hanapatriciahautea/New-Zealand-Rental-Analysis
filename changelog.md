@@ -1,4 +1,8 @@
 # Changelog
+### 2026-10-13
+- (julianefelder): Comment out date filtering for Airbnb data
+  Commented out the start_date and end_date variables and their usage in the filter_timeframe function.
+
 ### 2026-10-08
 - (hanapatriciahautea): Revised changelog for improved formatting and clarity
   Small formatting updates and removal of a redundant entry
