@@ -10,8 +10,9 @@ import plots as pl
 import stats as st
 import wrangling as wr
 
-start_date = "2020_01_01"
-end_date   = "2026_04_30"
+# if required, timesframe for airbnb data can be filtered using these variables and the wr.filter_timeframe() function
+# start_date = "2020_01_01"
+# end_date   = "2026_04_30"
 
 # Filenames to import
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -103,7 +104,7 @@ def main():
     # Clean the Files
     df_airbnb = wr.filter_locations(df_airbnb)
     df_airbnb = wr.do_basic_cleaning(df_airbnb)
-    df_airbnb = wr.filter_timeframe(df_airbnb, start_date=start_date, end_date=end_date)
+    #df_airbnb = wr.filter_timeframe(df_airbnb, start_date=start_date, end_date=end_date)
     df_airbnb = wr.convert_categoricals(df_airbnb)
 
     # Add the location data to the Airbnb data
