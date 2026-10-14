@@ -97,7 +97,7 @@ def main():
     Asks user for input and returns requested graphs, statistics, tables or ends the program. 
     '''
     # Load the file
-    df_airbnb = wr.read_csv_files(filenames=[os.path.join(input_path, "airbnb", filename) for filename in airbnb_data])    #Import & merge multiple files
+    df_airbnb = wr.read_csv_files(filenames=airbnb_data)    #Import & merge multiple files
     df_rental = wr.read_bond_file(os.path.join(input_path, "tenancy", rental_data), ",") 
     df_sa2    = wr.read_bond_file(os.path.join(input_path, "tenancy", sa2_data), ",")
 
