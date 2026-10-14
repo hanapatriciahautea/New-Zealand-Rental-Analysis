@@ -1,5 +1,10 @@
 # Changelog
+### 2026-10-14
+- (denseman): Updated requirements file to current specs.
+
 ### 2026-10-13
+- (denseman): Reapplied the fix to the bulk airbnb loading call (address issue of redundant input_path mentions)
+- (denseman): Updated to ensure that the merged data output file is saved into the correct location.
 - (julianefelder): Comment out date filtering for Airbnb data
   Commented out the start_date and end_date variables and their usage in the filter_timeframe function.
 

@@ -94,7 +94,7 @@ def do_basic_cleaning(df):
     return df
 
 
-def clean_airbnb(df):
+def clean_airbnb(df, output_path:str=""):
     # Came from the merge function, so presumably used for that somehow
     #create month ranges: MM=04 -> JAN-MAR, MM=07 -> APR-JUN, MM=10 -> JUL-SEP, MM=01 -> OCT-DEC
     df['months'] = df['month'].replace({1: "JAN-MAR", 2: "JAN-MAR", 3: "JAN-MAR", 4: "APR-JUN", 5: "APR-JUN", 6: "APR-JUN", 7: "JUL-SEP", 8: "JUL-SEP", 9: "JUL-SEP", 10: "OCT-DEC", 11: "OCT-DEC", 12: "OCT-DEC"})       
@@ -106,7 +106,7 @@ def clean_airbnb(df):
     df_merge_areas = df_merge_areas.rename(columns={'area_code': 'Location Id'})
     #Preview the results
     print(df_merge_areas.head())
-    df_merge_areas.to_csv("airbnb_ready_for_merge.csv", index=False)
+    df_merge_areas.to_csv(os.path.join(output_path,"airbnb_ready_for_merge.csv"), index=False)
     return df_merge_areas
 
 
@@ -225,9 +225,9 @@ def clean_rental(df, df2):
     return df
 
 
-def clean_rental_MERGE(df):
+def clean_rental_MERGE(df, output_path:str=""):
     # Drop the rows which aren't Dwelling Type of 'ALL' 
     df = df[(df['Dwelling Type'] == 'ALL') & (df['Number Of Beds'] == 'ALL')]
     df['No_Rental_Properties'] = df['Total Bonds'] + df['Active Bonds'] + df['Closed Bonds']
-    df.to_csv("rental_ready_for_merge.csv", index=False)
+    df.to_csv(os.path.join(output_path, "rental_ready_for_merge.csv"), index=False)
     return df
