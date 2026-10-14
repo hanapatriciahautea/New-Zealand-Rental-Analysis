@@ -18,7 +18,7 @@ def read_csv_files(filenames, filepath: str = None):
         if filepath[-1] == "\\":
             filepath = filepath[:-1]  #Remove slash from the end to avoid double-ups
         filepath = filepath.strip()    #Remove trailing whitespace
-        filename = [filepath + "\\" + os.path.basename(filename) for filename in filenames] # Combine the file path & name
+        filenames = [filepath + "\\" + os.path.basename(filename) for filename in filenames] # Combine the file path & name
     print("\nLoading Files...", end="")
     
     # Generate a list of dataframes based on the files
@@ -61,7 +61,6 @@ def cleaning_drop_col(df, target_columns):
 
 def cleaning_str_to_date(df, target_columns):
     '''Convert strings to datetime'''
-    
     for col in target_columns:
         df[col] = pd.to_datetime(df[col], format='%Y-%m-%d')    #Dates in the AirBnB 'listings' files look like "2026-03-20" and "2025-12-06"
     print(f" Converted {len(target_columns)} columns from string to datetime: {target_columns}")
@@ -161,12 +160,12 @@ def convert_categoricals(df):
             df[var_name] = df[var_name].astype("category")
             columns_affected['nominal'].append(var_name)
     num_variables = len(conversion_variables.keys())
-    print(f'Converted {num_variables} variable{'s' if num_variables > 1 else ""} to ordinal {columns_affected['ordinal']} or nominal {columns_affected['nominal']} categorical type.')
+    print(f"Converted {num_variables} variable{'s' if num_variables > 1 else ''} to ordinal {columns_affected['ordinal']} or nominal {columns_affected['nominal']} categorical type.")
     return df
 
 
 def clean_rental(df, df2):
-    '''Cleans rental bond dataset, filters data for only Christchurch City, matched datat to Airbnb dataset'''
+    '''Cleans rental bond dataset, filters data for only Christchurch City, matched data to Airbnb dataset'''
 
     #drop all Location Id = NULL
     df = df.dropna(subset=['Location Id'])
