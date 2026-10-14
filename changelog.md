@@ -1,5 +1,9 @@
 # Changelog
 ### 2026-10-14
+- (Hana Patricia Hautea): Made changes to filenames variables on main and wrangling files for CSV loading files
+- (hanapatriciahautea): Merge branch 'main' into Hana's-branch
+- (hanapatriciahautea): Merge pull request #33 from hanapatriciahautea/Hana's-branch
+  Made changes to filenames variables on main and wrangling files for CSV loading files
 - (denseman): Updated requirements file to current specs.
 
 ### 2026-10-13
